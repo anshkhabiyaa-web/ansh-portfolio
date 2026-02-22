@@ -1327,6 +1327,52 @@
             if (e.target === adminModal) adminModal.style.display = 'none';
         });
 
+        // --- SUPABASE AUTH LOGIC ---
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+
+        // Sign in with Google
+        googleLoginBtn.addEventListener('click', async () => {
+            if (!supabaseInstance) return;
+            const { error } = await supabaseInstance.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            if (error) alert("Login Error: " + error.message);
+        });
+
+        // Listen for auth state changes
+        if (supabaseInstance) {
+            supabaseInstance.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    updateAdminUI(session.user);
+                    adminModal.style.display = 'none';
+                    adminPanel.classList.add('active');
+                } else if (event === 'SIGNED_OUT') {
+                    adminPanel.classList.remove('active');
+                }
+            });
+
+            // Check for existing session on load
+            window.addEventListener('load', async () => {
+                const { data: { session } } = await supabaseInstance.auth.getSession();
+                if (session) {
+                    updateAdminUI(session.user);
+                    adminPanel.classList.add('active');
+                }
+            });
+        }
+
+        function updateAdminUI(user) {
+            const userPill = document.querySelector('.user-pill');
+            if (userPill && user.user_metadata) {
+                const { full_name, avatar_url } = user.user_metadata;
+                userPill.querySelector('span').textContent = full_name || user.email;
+                if (avatar_url) userPill.querySelector('img').src = avatar_url;
+            }
+        }
+
         // --- DEMO AUTH LOGIC ---
         const demoForm = document.getElementById('demoLoginForm');
         demoForm.addEventListener('submit', (e) => {
@@ -1341,7 +1387,10 @@
             }
         });
 
-        exitAdmin.addEventListener('click', () => {
+        exitAdmin.addEventListener('click', async () => {
+            if (supabaseInstance) {
+                await supabaseInstance.auth.signOut();
+            }
             adminPanel.classList.remove('active');
         });
 
