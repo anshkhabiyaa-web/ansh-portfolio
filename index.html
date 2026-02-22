@@ -1159,6 +1159,9 @@
                 <div class="admin-nav-item" data-tab="projects-tab">Projects</div>
                 <div class="admin-nav-item" data-tab="blog-tab">Blog</div>
                 <div class="admin-nav-item" data-tab="settings">Settings</div>
+                <div class="admin-nav-item" id="viewSiteSidebar"
+                    style="margin-top: auto; border-top: 1px solid #eee; color: var(--accent-color);">↗ View Website
+                </div>
             </nav>
         </aside>
 
@@ -1474,6 +1477,9 @@
         const adminPanel = document.getElementById('adminPanel');
         const exitAdmin = document.getElementById('exitAdmin');
         const viewSite = document.getElementById('viewSite');
+        const viewSiteSidebar = document.getElementById('viewSiteSidebar');
+
+        // Vercel Build Trigger: 2026-02-22T23:50:00
 
         openAdmin.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1553,6 +1559,10 @@
         });
 
         viewSite.addEventListener('click', () => {
+            adminPanel.classList.remove('active');
+        });
+
+        viewSiteSidebar.addEventListener('click', () => {
             adminPanel.classList.remove('active');
         });
 
