@@ -1345,26 +1345,38 @@
                 const heroBio = document.querySelector('.hero-bio');
 
                 if (data.full_name) {
-                    document.querySelector('.logo').textContent = data.full_name.split(' ')[0].toUpperCase();
-                    document.querySelector('.admin-sidebar .logo').textContent = data.full_name.split(' ')[0].toUpperCase() + ' Admin';
+                    const firstName = data.full_name.split(' ')[0].toUpperCase();
+                    document.querySelector('.logo').textContent = firstName;
+                    document.querySelector('.admin-sidebar .logo').textContent = firstName + ' Admin';
+                    // Update Hero Name
+                    const heroH1 = document.querySelector('#hero h1');
+                    if (heroH1) {
+                        heroH1.innerHTML = `Hello, I am <br><i>${data.full_name}.</i>`;
+                    }
                 }
 
                 if (data.tagline) heroTag.textContent = data.tagline;
                 if (data.bio) heroBio.textContent = data.bio;
 
-                // Update Admin Profile Inputs
-                document.querySelector('#profile input[value="Ansh Chauhan"]').value = data.full_name || '';
-                document.querySelector('#profile input[value="Product Designer & Developer"]').value = data.tagline || '';
-                document.querySelector('#profile textarea').value = data.bio || '';
-                document.querySelector('#settings input[value="ANSH | Portfolio"]').value = (data.full_name || 'ANSH') + ' | Portfolio';
-                document.querySelector('#settings input[placeholder="https://link-to-your-resume.pdf"]').value = data.resume_url || '';
+                // Update Admin Profile Inputs (using IDs or specific selection)
+                const profileInputs = document.querySelectorAll('#profile input, #profile textarea');
+                if (profileInputs.length >= 3) {
+                    profileInputs[0].value = data.full_name || '';
+                    profileInputs[1].value = data.tagline || '';
+                    profileInputs[2].value = data.bio || '';
+                }
+
+                const resumeInput = document.querySelector('#settings input[placeholder="https://link-to-your-resume.pdf"]');
+                if (resumeInput) resumeInput.value = data.resume_url || '';
             }
         }
 
         async function saveProfile() {
             if (!supabaseInstance) return;
-            const name = document.querySelector('#profile input:nth-of-type(1)').value;
-            const tagline = document.querySelector('#profile input:nth-of-type(2)').value;
+
+            // Fixed selectors
+            const name = document.querySelectorAll('#profile input')[0].value;
+            const tagline = document.querySelectorAll('#profile input')[1].value;
             const bio = document.querySelector('#profile textarea').value;
             const resume = document.querySelector('#settings input[placeholder="https://link-to-your-resume.pdf"]').value;
 
