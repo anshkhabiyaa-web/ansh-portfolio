@@ -1602,9 +1602,30 @@
         });
 
         // --- RESUME DOWNLOAD ---
-        document.getElementById('downloadCV').addEventListener('click', (e) => {
+        document.getElementById('downloadCV').addEventListener('click', async (e) => {
             e.preventDefault();
-            alert('Please add your Resume PDF URL in the Admin Settings tab.');
+
+            if (!supabaseInstance) {
+                alert("Supabase not initialized.");
+                return;
+            }
+
+            const { data, error } = await supabaseInstance.from('profile').select('resume_url').eq('id', 1).single();
+
+            if (data && data.resume_url) {
+                // To force download of a file, we create a temporary anchor tag
+                const link = document.createElement('a');
+                link.href = data.resume_url;
+                link.target = '_blank';
+                // Note: 'download' attribute only works for same-origin or direct file links.
+                // For external links like Canva, it will open the design.
+                link.download = 'Ansh_Chauhan_CV.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert('Please add your Resume PDF URL in the Admin Settings tab.');
+            }
         });
 
         // --- SMOOTH SCROLL FOR NAV LINKS ---
