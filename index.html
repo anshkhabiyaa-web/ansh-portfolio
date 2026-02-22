@@ -769,12 +769,23 @@
         }
 
         .exit-btn {
+            background: #eee;
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .view-site-btn {
             background: var(--text-color);
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .admin-content {
@@ -1158,6 +1169,7 @@
                         alt="User">
                     <span>Ansh Chauhan</span>
                 </div>
+                <button class="view-site-btn" id="viewSite">View Website</button>
                 <button class="exit-btn" id="exitAdmin">Exit Admin</button>
             </header>
 
@@ -1206,7 +1218,7 @@
                             <textarea
                                 rows="4">Based in India, I help brands and startups build thoughtful, user-centric interfaces and scalable web applications.</textarea>
                         </div>
-                        <button class="btn btn-primary">Save Changes</button>
+                        <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
                     </div>
                 </div>
 
@@ -1233,7 +1245,7 @@
                             <label>Description</label>
                             <textarea rows="3"></textarea>
                         </div>
-                        <button class="btn btn-primary">Add Project</button>
+                        <button class="btn btn-primary" onclick="addProject()">Add Project</button>
                     </div>
                 </div>
 
@@ -1249,7 +1261,7 @@
                             <label>Content (Markdown supported)</label>
                             <textarea rows="10"></textarea>
                         </div>
-                        <button class="btn btn-primary">Publish Post</button>
+                        <button class="btn btn-primary" onclick="publishPost()">Publish Post</button>
                     </div>
                 </div>
 
@@ -1273,7 +1285,7 @@
                             <label>Resume PDF URL</label>
                             <input type="url" placeholder="https://link-to-your-resume.pdf">
                         </div>
-                        <button class="btn btn-primary">Save Config</button>
+                        <button class="btn btn-primary" onclick="saveProfile()">Save Config</button>
                     </div>
                 </div>
             </div>
@@ -1312,11 +1324,156 @@
             observer.observe(section);
         });
 
-        // --- ADMIN MODAL CONTROLS ---
+        // --- SUPABASE DATA LOGIC ---
+        async function initData() {
+            if (!supabaseInstance) return;
+            await fetchProfile();
+            await fetchProjects();
+            await fetchBlog();
+        }
+
+        async function fetchProfile() {
+            if (!supabaseInstance) return;
+            const { data, error } = await supabaseInstance.from('profile').select('*').eq('id', 1).single();
+            if (data) {
+                // Update Portfolio UI
+                const heroTag = document.querySelector('.hero-tag');
+                const heroH1 = document.querySelector('#hero h1');
+                const heroBio = document.querySelector('.hero-bio');
+
+                if (data.full_name) {
+                    document.querySelector('.logo').textContent = data.full_name.split(' ')[0].toUpperCase();
+                    document.querySelector('.admin-sidebar .logo').textContent = data.full_name.split(' ')[0].toUpperCase() + ' Admin';
+                }
+
+                if (data.tagline) heroTag.textContent = data.tagline;
+                if (data.bio) heroBio.textContent = data.bio;
+
+                // Update Admin Profile Inputs
+                document.querySelector('#profile input[value="Ansh Chauhan"]').value = data.full_name || '';
+                document.querySelector('#profile input[value="Product Designer & Developer"]').value = data.tagline || '';
+                document.querySelector('#profile textarea').value = data.bio || '';
+                document.querySelector('#settings input[value="ANSH | Portfolio"]').value = (data.full_name || 'ANSH') + ' | Portfolio';
+                document.querySelector('#settings input[placeholder="https://link-to-your-resume.pdf"]').value = data.resume_url || '';
+            }
+        }
+
+        async function saveProfile() {
+            if (!supabaseInstance) return;
+            const name = document.querySelector('#profile input:nth-of-type(1)').value;
+            const tagline = document.querySelector('#profile input:nth-of-type(2)').value;
+            const bio = document.querySelector('#profile textarea').value;
+            const resume = document.querySelector('#settings input[placeholder="https://link-to-your-resume.pdf"]').value;
+
+            const { error } = await supabaseInstance.from('profile').upsert({
+                id: 1,
+                full_name: name,
+                tagline: tagline,
+                bio: bio,
+                resume_url: resume
+            });
+
+            if (error) alert("Save Error: " + error.message);
+            else {
+                alert("Profile updated successfully!");
+                fetchProfile();
+            }
+        }
+
+        async function fetchProjects() {
+            if (!supabaseInstance) return;
+            const { data, error } = await supabaseInstance.from('projects').select('*').order('created_at', { ascending: false });
+            if (data && data.length > 0) {
+                const grid = document.getElementById('projectsGrid');
+                grid.innerHTML = '';
+                data.forEach(proj => {
+                    const card = document.createElement('div');
+                    card.className = 'project-card';
+                    card.innerHTML = `
+                        <div class="thumbnail">${proj.emoji || '🚀'}</div>
+                        <div class="project-info">
+                            <div class="project-tags">
+                                ${proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('')}
+                            </div>
+                            <h3>${proj.title}</h3>
+                            <p class="project-desc">${proj.description}</p>
+                            <a href="${proj.link || '#'}" class="view-link">View Project →</a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        async function addProject() {
+            if (!supabaseInstance) return;
+            const title = document.querySelector('#projects-tab input[placeholder="Project Name"]').value;
+            const emoji = document.querySelector('#projects-tab input[placeholder="🚀"]').value;
+            const tags = document.querySelector('#projects-tab input[placeholder="Design, Web"]').value;
+            const desc = document.querySelector('#projects-tab textarea').value;
+
+            const { error } = await supabaseInstance.from('projects').insert({
+                title, emoji, tags, description: desc
+            });
+
+            if (error) alert("Error adding project: " + error.message);
+            else {
+                alert("Project added!");
+                fetchProjects();
+                document.querySelector('#projects-tab textarea').value = '';
+                document.querySelectorAll('#projects-tab input').forEach(i => i.value = '');
+            }
+        }
+
+        async function fetchBlog() {
+            if (!supabaseInstance) return;
+            const { data, error } = await supabaseInstance.from('blog').select('*').order('created_at', { ascending: false });
+            if (data && data.length > 0) {
+                const list = document.getElementById('blogList');
+                list.innerHTML = '';
+                data.forEach(post => {
+                    const date = new Date(post.created_at);
+                    const day = date.getDate();
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'blog-item';
+                    item.innerHTML = `
+                        <div class="blog-date">${day < 10 ? '0' + day : day}</div>
+                        <div class="blog-content">
+                            <span class="blog-category">${post.category || 'Article'}</span>
+                            <h3>${post.title}</h3>
+                        </div>
+                        <div class="blog-arrow">→</div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+        }
+
+        async function publishPost() {
+            if (!supabaseInstance) return;
+            const title = document.querySelector('#blog-tab input').value;
+            const content = document.querySelector('#blog-tab textarea').value;
+
+            const { error } = await supabaseInstance.from('blog').insert({
+                title, content, category: 'Article'
+            });
+
+            if (error) alert("Error publishing post: " + error.message);
+            else {
+                alert("Post published!");
+                fetchBlog();
+                document.querySelector('#blog-tab textarea').value = '';
+                document.querySelector('#blog-tab input').value = '';
+            }
+        }
+
+        // --- AUTH & INITIALIZATION ---
         const openAdmin = document.getElementById('openAdmin');
         const adminModal = document.getElementById('adminModal');
         const adminPanel = document.getElementById('adminPanel');
         const exitAdmin = document.getElementById('exitAdmin');
+        const viewSite = document.getElementById('viewSite');
 
         openAdmin.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1361,6 +1518,7 @@
                     updateAdminUI(session.user);
                     adminPanel.classList.add('active');
                 }
+                initData(); // Load data whether signed in or not
             });
         }
 
@@ -1394,6 +1552,10 @@
             adminPanel.classList.remove('active');
         });
 
+        viewSite.addEventListener('click', () => {
+            adminPanel.classList.remove('active');
+        });
+
         // --- ADMIN TABS ---
         const navItems = document.querySelectorAll('.admin-nav-item');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -1422,19 +1584,6 @@
             e.preventDefault();
             alert('Please add your Resume PDF URL in the Admin Settings tab.');
         });
-
-        // --- SUPABASE INTEGRATION EXAMPLE ---
-        async function fetchProjects() {
-            if (!supabaseInstance) return;
-            // const { data, error } = await supabase.from('projects').select('*');
-            // if (data) renderProjects(data);
-        }
-
-        async function fetchBlog() {
-            if (!supabaseInstance) return;
-            // const { data, error } = await supabase.from('blog').select('*');
-            // if (data) renderBlog(data);
-        }
 
         // --- SMOOTH SCROLL FOR NAV LINKS ---
         document.querySelectorAll('.nav-links a').forEach(anchor => {
