@@ -1687,9 +1687,19 @@
 
         // Vercel Build Trigger: 2026-02-22T23:50:00
 
-        openAdmin.addEventListener('click', (e) => {
+        openAdmin.addEventListener('click', async (e) => {
             e.preventDefault();
-            adminModal.style.display = 'flex';
+            if (supabaseInstance) {
+                const { data: { session } } = await supabaseInstance.auth.getSession();
+                if (session && session.user.email === 'anshkhabiyaa@gmail.com') {
+                    adminPanel.classList.add('active');
+                    updateAdminUI(session.user);
+                } else {
+                    adminModal.style.display = 'flex';
+                }
+            } else {
+                adminModal.style.display = 'flex';
+            }
         });
 
         adminModal.addEventListener('click', (e) => {
@@ -1721,7 +1731,7 @@
                     if (userEmail === 'anshkhabiyaa@gmail.com') {
                         updateAdminUI(session.user);
                         adminModal.style.display = 'none';
-                        adminPanel.classList.add('active');
+                        // Removed auto-redirection to dashboard on sign-in
                     } else {
                         // Unauthorized user
                         await supabaseInstance.auth.signOut();
@@ -1732,15 +1742,14 @@
                 }
             });
 
-            // Check for existing session on load
+            // Check for existing session on load (Internal Logic Only)
             window.addEventListener('load', async () => {
                 const { data: { session } } = await supabaseInstance.auth.getSession();
                 if (session) {
                     const userEmail = session.user.email;
-
                     if (userEmail === 'anshkhabiyaa@gmail.com') {
                         updateAdminUI(session.user);
-                        adminPanel.classList.add('active');
+                        // Stay on portfolio page by default
                     } else {
                         await supabaseInstance.auth.signOut();
                     }
