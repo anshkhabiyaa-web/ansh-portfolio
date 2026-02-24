@@ -1745,13 +1745,18 @@
         // Sign in with Google
         googleLoginBtn.addEventListener('click', async () => {
             if (!supabaseInstance) return;
+            // Set flag to allow auto-showing dashboard after redirect
+            sessionStorage.setItem('isLoggingIn', 'true');
             const { error } = await supabaseInstance.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
                     redirectTo: window.location.origin + window.location.pathname
                 }
             });
-            if (error) alert("Login Error: " + error.message);
+            if (error) {
+                sessionStorage.removeItem('isLoggingIn');
+                alert("Login Error: " + error.message);
+            }
         });
 
         // Listen for auth state changes
@@ -1760,18 +1765,25 @@
                 if (event === 'SIGNED_IN' && session) {
                     const userEmail = session.user.email;
 
-                    // Email Whitelist Check
+                    // Strict Email Whitelist Check
                     if (userEmail === 'anshkhabiyaa@gmail.com') {
                         updateAdminUI(session.user);
                         adminModal.style.display = 'none';
-                        // Removed auto-redirection to dashboard on sign-in
+
+                        // Only show dashboard automatically if we just came from the login flow
+                        if (sessionStorage.getItem('isLoggingIn') === 'true') {
+                            adminPanel.classList.add('active');
+                            sessionStorage.removeItem('isLoggingIn');
+                        }
                     } else {
-                        // Unauthorized user
+                        // Unauthorized user: Sign out and notify
                         await supabaseInstance.auth.signOut();
+                        sessionStorage.removeItem('isLoggingIn');
                         alert('Access Denied. This admin panel is private.');
                     }
                 } else if (event === 'SIGNED_OUT') {
                     adminPanel.classList.remove('active');
+                    sessionStorage.removeItem('isLoggingIn');
                 }
             });
 
@@ -1782,7 +1794,7 @@
                     const userEmail = session.user.email;
                     if (userEmail === 'anshkhabiyaa@gmail.com') {
                         updateAdminUI(session.user);
-                        // Stay on portfolio page by default
+                        // No auto-redirect here to honor "stay on home page on load" rule
                     } else {
                         await supabaseInstance.auth.signOut();
                     }
