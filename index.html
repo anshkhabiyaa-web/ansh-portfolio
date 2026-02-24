@@ -2244,51 +2244,60 @@
             });
         });
 
-        // --- CONTACT FORM ---
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        // --- CONTACT FORM (Zapier via hidden iframe - bypasses CORS completely) ---
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
             const submitBtn = e.target.querySelector('.submit-btn');
             const originalBtnText = submitBtn.textContent;
 
-            // Get form data
+            // Get form values
             const name = e.target.querySelector('input[type="text"]').value;
             const email = e.target.querySelector('input[type="email"]').value;
             const message = e.target.querySelector('textarea').value;
 
-            // Build URL-encoded body (avoids CORS preflight)
-            const formBody = new URLSearchParams({
-                name: name,
-                email: email,
-                message: message
-            });
+            // UI State: Loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
 
-            try {
-                // UI State: Loading
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending...';
+            // Create hidden iframe to receive form response
+            const iframeName = 'zapier_iframe_' + Date.now();
+            const iframe = document.createElement('iframe');
+            iframe.name = iframeName;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
 
-                // Use no-cors mode to bypass CORS restrictions with Zapier
-                await fetch('https://hooks.zapier.com/hooks/catch/26220194/uceh8wf/', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: formBody.toString()
-                });
+            // Create hidden form targeting the iframe
+            const hiddenForm = document.createElement('form');
+            hiddenForm.method = 'POST';
+            hiddenForm.action = 'https://hooks.zapier.com/hooks/catch/26220194/uceh8wf/';
+            hiddenForm.target = iframeName;
+            hiddenForm.style.display = 'none';
 
-                // With no-cors, response is opaque but request is sent successfully
+            // Add form fields
+            const fields = { name, email, message };
+            for (const [key, value] of Object.entries(fields)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                hiddenForm.appendChild(input);
+            }
+
+            document.body.appendChild(hiddenForm);
+            hiddenForm.submit();
+
+            // Show success after a short delay (form is already sent)
+            setTimeout(() => {
                 alert('Message sent! I will get back to you soon.');
                 e.target.reset();
-            } catch (error) {
-                console.error('Form Error:', error);
-                alert('Something went wrong. Please try again or email directly.');
-            } finally {
-                // UI State: Reset
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalBtnText;
-            }
+
+                // Clean up
+                document.body.removeChild(hiddenForm);
+                document.body.removeChild(iframe);
+            }, 1500);
         });
 
         // --- RESUME DOWNLOAD ---
