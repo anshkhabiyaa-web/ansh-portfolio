@@ -1720,19 +1720,9 @@
 
         // Vercel Build Trigger: 2026-02-22T23:50:00
 
-        openAdmin.addEventListener('click', async (e) => {
+        openAdmin.addEventListener('click', (e) => {
             e.preventDefault();
-            if (supabaseInstance) {
-                const { data: { session } } = await supabaseInstance.auth.getSession();
-                if (session && session.user.email === 'anshkhabiyaa@gmail.com') {
-                    adminPanel.classList.add('active');
-                    updateAdminUI(session.user);
-                } else {
-                    adminModal.style.display = 'flex';
-                }
-            } else {
-                adminModal.style.display = 'flex';
-            }
+            adminModal.style.display = 'flex';
         });
 
         adminModal.addEventListener('click', (e) => {
