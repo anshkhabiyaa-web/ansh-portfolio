@@ -1330,7 +1330,7 @@
                     <span>Ansh Chauhan</span>
                 </div>
                 <button class="view-site-btn" id="viewSite">View Website</button>
-                <button class="exit-btn" id="exitAdmin">Exit Admin</button>
+                <button class="exit-btn" id="logoutBtn">Logout</button>
             </header>
 
             <div class="admin-content">
@@ -1692,7 +1692,7 @@
         const openAdmin = document.getElementById('openAdmin');
         const adminModal = document.getElementById('adminModal');
         const adminPanel = document.getElementById('adminPanel');
-        const exitAdmin = document.getElementById('exitAdmin');
+        const logoutBtn = document.getElementById('logoutBtn');
         const viewSite = document.getElementById('viewSite');
         const viewSiteSidebar = document.getElementById('viewSiteSidebar');
 
@@ -1792,7 +1792,7 @@
             }
         });
 
-        exitAdmin.addEventListener('click', async () => {
+        logoutBtn.addEventListener('click', async () => {
             if (supabaseInstance) {
                 await supabaseInstance.auth.signOut();
             }
