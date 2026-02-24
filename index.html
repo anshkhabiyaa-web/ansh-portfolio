@@ -1316,8 +1316,8 @@
                 <div class="projects-grid" id="projectsGrid">
                     <!-- Dynamic Content -->
                     <div class="project-card" style="cursor: pointer;"
-                        onclick="openProjectModal({title: 'Khabiya Store', emoji: '🏬', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
-                        <div class="thumbnail">🏬</div>
+                        onclick="openProjectModal({title: 'Khabiya Store', image: 'khabiya_store.jpg', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
+                        <div class="thumbnail"><img src="khabiya_store.jpg" alt="Khabiya Store"></div>
                         <div class="project-info">
                             <div class="project-tags">
                                 <span class="project-tag">Family Business</span>
@@ -1758,13 +1758,13 @@
                 const grid = document.getElementById('projectsGrid');
                 grid.innerHTML = '';
                 data.forEach(proj => {
-                    // Ultimate override for the Khabiya project to remove images
+                    // Ultimate override removed - now using khabiya_store.jpg
                     const pTitle = (proj.title || "").toLowerCase();
                     const pDesc = (proj.description || "").toLowerCase();
                     if (pTitle.includes('khabiya') || pDesc.includes('khabiya') || pDesc.includes('ratlam')) {
-                        console.log("Forcing emoji for Khabiya project");
-                        proj.image = null;
-                        proj.emoji = '🏬';
+                        if (!proj.image) {
+                            proj.image = 'khabiya_store.jpg';
+                        }
                     }
                     const card = document.createElement('div');
                     card.className = 'project-card';
