@@ -402,6 +402,13 @@
             justify-content: center;
             font-size: 60px;
             transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .project-card:hover .thumbnail {
@@ -517,6 +524,13 @@
         .modal-emoji {
             font-size: 80px;
             margin-bottom: 30px;
+        }
+
+        .modal-emoji img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
         }
 
         .view-link {
@@ -1122,8 +1136,8 @@
                 <div class="projects-grid" id="projectsGrid">
                     <!-- Dynamic Content -->
                     <div class="project-card" style="cursor: pointer;"
-                        onclick="openProjectModal({title: 'Khabiya Store', emoji: '🛍️', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
-                        <div class="thumbnail">🛍️</div>
+                        onclick="openProjectModal({title: 'Khabiya Store', image: 'khabiya_store.jpg', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
+                        <div class="thumbnail"><img src="khabiya_store.jpg" alt="Khabiya Store"></div>
                         <div class="project-info">
                             <div class="project-tags">
                                 <span class="project-tag">Family Business</span>
@@ -1582,7 +1596,7 @@
                     card.className = 'project-card';
                     card.style.cursor = 'pointer';
                     card.innerHTML = `
-                        <div class="thumbnail">${proj.emoji || '🚀'}</div>
+                        <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : (proj.emoji || '🚀')}</div>
                         <div class="project-info">
                             <div class="project-tags">
                                 ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
@@ -1602,7 +1616,7 @@
             const body = document.getElementById('modalBody');
 
             body.innerHTML = `
-                <div class="modal-emoji">${proj.emoji || '🚀'}</div>
+                <div class="modal-emoji">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : (proj.emoji || '🚀')}</div>
                 <h2>${proj.title}</h2>
                 <div class="project-tags">
                     ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
