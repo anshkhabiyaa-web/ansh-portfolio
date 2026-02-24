@@ -529,7 +529,7 @@
         .modal-emoji img {
             width: 120px;
             height: 120px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 12px;
         }
 
@@ -1342,8 +1342,9 @@
                         </div>
                     </div>
                     <div class="project-card" style="cursor: pointer;"
-                        onclick="openProjectModal({title: 'Incubator & Accelerator Centre', emoji: '💡', tags: 'VP Marketing, Events, Strategy', description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'})">
-                        <div class="thumbnail">💡</div>
+                        onclick="openProjectModal({title: 'Incubator &amp; Accelerator Centre', image: 'incubator_centre.jpg', tags: 'VP Marketing, Events, Strategy', description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'})">
+                        <div class="thumbnail"><img src="incubator_centre.jpg" alt="Incubator & Accelerator Centre">
+                        </div>
                         <div class="project-info">
                             <div class="project-tags">
                                 <span class="project-tag">VP Marketing</span>
