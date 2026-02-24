@@ -1523,9 +1523,6 @@
                 const heroBio = document.querySelector('.hero-bio');
 
                 if (data.full_name) {
-                    const firstName = data.full_name.split(' ')[0].toUpperCase();
-                    document.querySelector('.logo').textContent = firstName;
-                    document.querySelector('.admin-sidebar .logo').textContent = firstName + ' Admin';
                     // Update Hero Name
                     const heroH1 = document.querySelector('#hero h1');
                     if (heroH1) {
