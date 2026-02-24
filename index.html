@@ -144,6 +144,22 @@
             background: #333;
         }
 
+        .nav-cv-btn {
+            border: 1px solid var(--border-color);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px !important;
+            margin-left: 10px;
+            opacity: 1 !important;
+            transition: var(--transition);
+        }
+
+        .nav-cv-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border-color: var(--text-color);
+        }
+
         /* --- Hero --- */
         #hero .container {
             display: grid;
@@ -892,6 +908,7 @@
                 <a href="#projects">Work</a>
                 <a href="#blog">Blog</a>
                 <a href="#contact">Contact</a>
+                <a href="#" class="nav-cv-btn cv-download-trigger">CV ↓</a>
             </div>
             <a href="#" class="admin-pill" id="openAdmin">Admin ↗</a>
         </div>
@@ -996,7 +1013,7 @@
                 </div>
                 <!-- Centered Download CV -->
                 <div style="text-align: center; margin-top: 60px;">
-                    <a href="#" class="btn btn-secondary" id="downloadCV">Download CV</a>
+                    <a href="#" class="btn btn-secondary cv-download-trigger" id="downloadCV">Download CV</a>
                 </div>
             </div>
         </section>
@@ -1636,37 +1653,39 @@
         });
 
         // --- RESUME DOWNLOAD ---
-        document.getElementById('downloadCV').addEventListener('click', async (e) => {
-            e.preventDefault();
+        document.querySelectorAll('.cv-download-trigger').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
 
-            if (!supabaseInstance) {
-                alert("Supabase not initialized.");
-                return;
-            }
-
-            const { data, error } = await supabaseInstance.from('profile').select('resume_url').eq('id', 1).single();
-
-            if (data && data.resume_url) {
-                let finalUrl = data.resume_url;
-
-                // Automatic conversion for Google Drive links to force download
-                if (finalUrl.includes('drive.google.com')) {
-                    const driveIdMatch = finalUrl.match(/\/d\/(.+?)\//) || finalUrl.match(/id=(.+?)(&|$)/);
-                    if (driveIdMatch && driveIdMatch[1]) {
-                        finalUrl = `https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`;
-                    }
+                if (!supabaseInstance) {
+                    alert("Supabase not initialized.");
+                    return;
                 }
 
-                const link = document.createElement('a');
-                link.href = finalUrl;
-                link.target = '_blank';
-                link.download = 'Ansh_Chauhan_CV.pdf';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                alert('Please add your Resume PDF URL in the Admin Settings tab.');
-            }
+                const { data, error } = await supabaseInstance.from('profile').select('resume_url').eq('id', 1).single();
+
+                if (data && data.resume_url) {
+                    let finalUrl = data.resume_url;
+
+                    // Automatic conversion for Google Drive links to force download
+                    if (finalUrl.includes('drive.google.com')) {
+                        const driveIdMatch = finalUrl.match(/\/d\/(.+?)\//) || finalUrl.match(/id=(.+?)(&|$)/);
+                        if (driveIdMatch && driveIdMatch[1]) {
+                            finalUrl = `https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`;
+                        }
+                    }
+
+                    const link = document.createElement('a');
+                    link.href = finalUrl;
+                    link.target = '_blank';
+                    link.download = 'Ansh_Chauhan_CV.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert('Please add your Resume PDF URL in the Admin Settings tab.');
+                }
+            });
         });
 
         // --- SMOOTH SCROLL FOR NAV LINKS ---
