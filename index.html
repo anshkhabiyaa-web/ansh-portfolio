@@ -427,9 +427,95 @@
         }
 
         .project-desc {
-            font-size: 16px;
-            opacity: 0.7;
-            margin: 10px 0;
+            display: none;
+        }
+
+        .view-more-btn {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent-color);
+            margin-top: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- Project Modal --- */
+        #projectModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        #projectModal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .project-modal-content {
+            background: var(--bg-color);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            position: relative;
+            padding: 60px;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: var(--transition);
+            color: var(--text-color);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        #projectModal.active .project-modal-content {
+            transform: translateY(0);
+        }
+
+        .close-project-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+
+        .close-project-modal:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .modal-body h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .modal-body .project-tags {
+            margin-bottom: 30px;
+        }
+
+        .modal-body .full-desc {
+            font-size: 20px;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .modal-emoji {
+            font-size: 80px;
+            margin-bottom: 30px;
         }
 
         .view-link {
@@ -1014,7 +1100,8 @@
                 <h2>Selected Work</h2>
                 <div class="projects-grid" id="projectsGrid">
                     <!-- Dynamic Content -->
-                    <div class="project-card">
+                    <div class="project-card" style="cursor: pointer;"
+                        onclick="openProjectModal({title: 'Khabiya Store', emoji: '🛍️', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
                         <div class="thumbnail">🛍️</div>
                         <div class="project-info">
                             <div class="project-tags">
@@ -1023,13 +1110,11 @@
                                 <span class="project-tag">Digital Marketing</span>
                             </div>
                             <h3>Khabiya Store</h3>
-                            <p class="project-desc">Managed operations and digital marketing for family retail business
-                                in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily
-                                sales operations and employee management.</p>
-                            <a href="#" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" style="cursor: pointer;"
+                        onclick="openProjectModal({title: 'Jai Hind Digital Nexus', emoji: '🎭', tags: 'VP Marketing, Event, Sponsorships', description: 'Served as VP of Marketing for Nexus, a 2-day digital led cultural fest at Jai Hind College Mumbai. Brought in sponsorships and partnerships to secure and fund the event and helped establish the committee from ground up.'})">
                         <div class="thumbnail">🎭</div>
                         <div class="project-info">
                             <div class="project-tags">
@@ -1038,13 +1123,11 @@
                                 <span class="project-tag">Sponsorships</span>
                             </div>
                             <h3>Jai Hind Digital Nexus</h3>
-                            <p class="project-desc">Served as VP of Marketing for Nexus, a 2-day digital led cultural
-                                fest at Jai Hind College Mumbai. Brought in sponsorships and partnerships to secure and
-                                fund the event and helped establish the committee from ground up.</p>
-                            <a href="#" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" style="cursor: pointer;"
+                        onclick="openProjectModal({title: 'Incubator & Accelerator Centre', emoji: '💡', tags: 'VP Marketing, Events, Strategy', description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'})">
                         <div class="thumbnail">💡</div>
                         <div class="project-info">
                             <div class="project-tags">
@@ -1053,12 +1136,11 @@
                                 <span class="project-tag">Strategy</span>
                             </div>
                             <h3>Incubator & Accelerator Centre</h3>
-                            <p class="project-desc">As VP of Marketing, secured sponsorship for Internship Fair, Startup
-                                Expo at Jai Hind College Mumbai.</p>
-                            <a href="#" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" style="cursor: pointer;"
+                        onclick="openProjectModal({title: 'AI-Powered Builds & Automation', emoji: '🤖', tags: 'AI, No-Code, Automation, Web', description: 'Built websites and digital tools using AI — including Google AI Studio, Zapier, N8N, Lovable, Antigravity, Cursor, Supabase, WordPress, Pomelio and Gemini'})">
                         <div class="thumbnail">🤖</div>
                         <div class="project-info">
                             <div class="project-tags">
@@ -1068,15 +1150,11 @@
                                 <span class="project-tag">Web</span>
                             </div>
                             <h3>AI-Powered Builds & Automation</h3>
-                            <p class="project-desc">Built websites and digital tools using AI — including converting
-                                dummy product photos into model shots using Google AI Studio, building automated
-                                workflows using Zapier and N8N, creating web apps using Lovable, Antigravity and Cursor,
-                                and managing databases with Supabase. Also built WordPress sites and generated marketing
-                                campaigns using Pomelio and Gemini</p>
-                            <a href="#" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     </div>
-                    <div class="project-card">
+                    <div class="project-card" style="cursor: pointer;"
+                        onclick="openProjectModal({title: 'Event Committees, Jai Hind College', emoji: '🎉', tags: 'Organising Committee, Events, College', description: 'Part of the organising committee for multiple major events at Jai Hind College Mumbai — handled External Public Relations and networking for Family Business Hub, managed Brand Relations and stakeholder networking for Jai Hind Business Conclave, and led Marketing for Talaash, the college cultural fest.'})">
                         <div class="thumbnail">🎉</div>
                         <div class="project-info">
                             <div class="project-tags">
@@ -1085,11 +1163,7 @@
                                 <span class="project-tag">College</span>
                             </div>
                             <h3>Event Committees, Jai Hind College</h3>
-                            <p class="project-desc">Part of the organising committee for multiple major events at Jai
-                                Hind College Mumbai — handled External Public Relations and networking for Family
-                                Business Hub, managed Brand Relations and stakeholder networking for Jai Hind Business
-                                Conclave, and led Marketing for Talaash, the college cultural fest.</p>
-                            <a href="#" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     </div>
                 </div>
@@ -1168,6 +1242,16 @@
             <p>&copy; 2024 ANSH. All rights reserved. Built with simplicity.</p>
         </div>
     </footer>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal">
+        <div class="project-modal-content">
+            <button class="close-project-modal">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
 
     <!-- Admin Modal -->
     <div id="adminModal">
@@ -1466,21 +1550,69 @@
                 data.forEach(proj => {
                     const card = document.createElement('div');
                     card.className = 'project-card';
+                    card.style.cursor = 'pointer';
                     card.innerHTML = `
                         <div class="thumbnail">${proj.emoji || '🚀'}</div>
                         <div class="project-info">
                             <div class="project-tags">
-                                ${proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('')}
+                                ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
                             </div>
                             <h3>${proj.title}</h3>
-                            <p class="project-desc">${proj.description}</p>
-                            <a href="${proj.link || '#'}" class="view-link">View Project →</a>
+                            <div class="view-more-btn">Read More →</div>
                         </div>
                     `;
+                    card.addEventListener('click', () => openProjectModal(proj));
                     grid.appendChild(card);
                 });
             }
         }
+
+        function openProjectModal(proj) {
+            const modal = document.getElementById('projectModal');
+            const body = document.getElementById('modalBody');
+
+            body.innerHTML = `
+                <div class="modal-emoji">${proj.emoji || '🚀'}</div>
+                <h2>${proj.title}</h2>
+                <div class="project-tags">
+                    ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
+                </div>
+                <p class="full-desc">${proj.description || 'No description available.'}</p>
+                ${proj.link ? `<a href="${proj.link}" target="_blank" class="btn btn-secondary" style="display: inline-block;">View Project Source →</a>` : ''}
+            `;
+
+            modal.style.display = 'flex';
+            // Force reflow
+            modal.offsetHeight;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scroll
+        }
+
+        function closeProjectModal() {
+            const modal = document.getElementById('projectModal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scroll
+            }, 400); // Wait for transition
+        }
+
+        // Close modal on click of close button or outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-project-modal')) {
+                closeProjectModal();
+            }
+            if (e.target.id === 'projectModal') {
+                closeProjectModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProjectModal();
+            }
+        });
 
         async function addProject() {
             if (!supabaseInstance) return;
