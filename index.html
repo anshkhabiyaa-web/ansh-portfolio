@@ -1522,11 +1522,20 @@
 
         // Listen for auth state changes
         if (supabaseInstance) {
-            supabaseInstance.auth.onAuthStateChange((event, session) => {
+            supabaseInstance.auth.onAuthStateChange(async (event, session) => {
                 if (event === 'SIGNED_IN' && session) {
-                    updateAdminUI(session.user);
-                    adminModal.style.display = 'none';
-                    adminPanel.classList.add('active');
+                    const userEmail = session.user.email;
+
+                    // Email Whitelist Check
+                    if (userEmail === 'anshkhabiyaa@gmail.com') {
+                        updateAdminUI(session.user);
+                        adminModal.style.display = 'none';
+                        adminPanel.classList.add('active');
+                    } else {
+                        // Unauthorized user
+                        await supabaseInstance.auth.signOut();
+                        alert('Access Denied. This admin panel is private.');
+                    }
                 } else if (event === 'SIGNED_OUT') {
                     adminPanel.classList.remove('active');
                 }
@@ -1536,8 +1545,14 @@
             window.addEventListener('load', async () => {
                 const { data: { session } } = await supabaseInstance.auth.getSession();
                 if (session) {
-                    updateAdminUI(session.user);
-                    adminPanel.classList.add('active');
+                    const userEmail = session.user.email;
+
+                    if (userEmail === 'anshkhabiyaa@gmail.com') {
+                        updateAdminUI(session.user);
+                        adminPanel.classList.add('active');
+                    } else {
+                        await supabaseInstance.auth.signOut();
+                    }
                 }
                 initData(); // Load data whether signed in or not
             });
