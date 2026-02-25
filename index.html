@@ -123,24 +123,137 @@
             font-weight: 600;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+        /* --- Gooey Navigation (PC Only) --- */
+        @media (min-width: 769px) {
+            .nav-links-wrapper {
+                display: flex;
+                justify-content: center;
+                flex: 1;
+            }
+
+            .gooey-nav-container {
+                --color-1: #555;
+                --color-2: #333;
+                --color-3: #777;
+                --color-4: #222;
+                position: relative;
+                padding: 10px 0;
+            }
+
+            .gooey-nav-container nav ul {
+                display: flex;
+                gap: 40px;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                position: relative;
+                z-index: 10;
+            }
+
+            .gooey-nav-container nav ul li {
+                position: relative;
+            }
+
+            .gooey-nav-container nav ul li a {
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 500;
+                color: var(--text-color);
+                padding: 10px 20px;
+                display: block;
+                transition: color 0.3s ease;
+                opacity: 1 !important;
+                /* Managed by gooey effect */
+            }
+
+            .gooey-nav-container .effect {
+                position: absolute;
+                border-radius: 50px;
+                pointer-events: none;
+                transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .gooey-nav-container .effect.filter {
+                background: var(--text-color);
+                filter: url('#goo');
+                z-index: 1;
+            }
+
+            .gooey-nav-container .effect.text {
+                background: var(--text-color);
+                color: var(--bg-color);
+                z-index: 11;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-weight: 500;
+                overflow: hidden;
+                white-space: nowrap;
+                opacity: 0;
+                transition: opacity 0.3s ease, all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .gooey-nav-container .effect.text.active {
+                opacity: 1;
+            }
+
+            /* --- Particles --- */
+            .particle {
+                position: absolute;
+                width: 0;
+                height: 0;
+                left: 50%;
+                top: 50%;
+                pointer-events: none;
+            }
+
+            .particle .point {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: var(--color, white);
+                transform: translate(-50%, -50%) scale(0);
+            }
+
+            .particle.active .point {
+                animation: particle-anim var(--time) ease-out forwards;
+            }
+
+            @keyframes particle-anim {
+                0% {
+                    transform: translate(var(--start-x), var(--start-y)) scale(0) rotate(0deg);
+                }
+
+                20% {
+                    transform: translate(var(--start-x), var(--start-y)) scale(var(--scale)) rotate(var(--rotate));
+                }
+
+                100% {
+                    transform: translate(var(--end-x), var(--end-y)) scale(0) rotate(calc(var(--rotate) * 2));
+                }
+            }
+
+            /* Hide legacy nav links if they exist */
+            nav>.container>.nav-links {
+                display: none;
+            }
         }
 
-        .nav-links a {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-            opacity: 0.6;
-        }
+        /* Mobile Adjustments for Nav */
+        @media (max-width: 768px) {
+            .nav-links-wrapper {
+                display: none;
+            }
 
-        .nav-links a:hover {
-            opacity: 1;
+            .nav-links {
+                display: none;
+                /* Hide original nav links */
+            }
         }
 
         .admin-pill {
@@ -1902,11 +2015,17 @@
 
             <div class="container">
                 <a href="#" class="logo serif">ANSH KHABIYA</a>
-                <div class="nav-links">
-                    <a href="#about">About</a>
-                    <a href="#projects">Work</a>
-                    <a href="#contact">Contact</a>
-                    <a href="#cv">CV</a>
+                <div class="nav-links-wrapper desktop-only">
+                    <div class="gooey-nav-container" id="gooeyNav">
+                        <div class="nav-links">
+                            <a href="#about">About</a>
+                            <a href="#projects">Work</a>
+                            <a href="#contact">Contact</a>
+                            <a href="#cv">CV</a>
+                        </div>
+                        <span class="effect filter"></span>
+                        <span class="effect text"></span>
+                    </div>
                 </div>
                 <div class="nav-right">
                     <a href="#" class="admin-pill desktop-only" id="openAdmin">Admin ↗</a>
@@ -3441,6 +3560,17 @@
             initLightRays();
         });
     </script>
+    <!-- SVG Filter for Gooey Navigation -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+                    result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+            </filter>
+        </defs>
+    </svg>
 </body>
 
 
