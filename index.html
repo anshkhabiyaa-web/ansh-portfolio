@@ -3031,12 +3031,6 @@
             var siteContent = document.getElementById('siteContent');
             if (!splash || !siteContent) return;
 
-            // If already seen this session, skip splash entirely
-            if (sessionStorage.getItem('splashSeen')) {
-                splash.style.display = 'none';
-                siteContent.classList.add('no-splash');
-                return;
-            }
 
             // Tilt engine for the splash card
             var sWrap = document.getElementById('splashCardWrapper');
@@ -3103,7 +3097,7 @@
 
             // Dismiss splash on click
             splash.addEventListener('click', function () {
-                sessionStorage.setItem('splashSeen', '1');
+
                 splash.classList.add('fade-out');
                 siteContent.classList.add('visible');
                 setTimeout(function () {
