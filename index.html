@@ -3033,31 +3033,34 @@
 
                 const config = {
                     raysOrigin: 'top-center',
-                    raysColor: '#B8A181', // Elegant Champagne/Gold tint for contrast
-                    raysSpeed: 0.3,       // Slightly slower for a more graceful feel
-                    lightSpread: 0.9,     // Wider spread
-                    rayLength: 2.2,       // Longer rays
-                    pulsating: true,
-                    fadeDistance: 1.6,
-                    saturation: 1.0,
-                    followMouse: true,
-                    mouseInfluence: 0.1,
-                    noiseAmount: 0.1,
-                    distortion: 0.15
-                };
+                    const config = {
+                        raysOrigin: 'top-center',
+                        raysColor: '#2C2C2B', // Deep charcoal for high contrast on light bg
+                        raysSpeed: 0.25,      // Slower speed for a subtle, atmospheric feel
+                        lightSpread: 0.85,    // Muted spread
+                        rayLength: 2.0,       // Standard length
+                        pulsating: true,
+                        fadeDistance: 1.5,
+                        saturation: 0.8,      // Slightly desaturated for elegance
+                        followMouse: true,
+                        mouseInfluence: 0.08,
+                        noiseAmount: 0.1,
+                        distortion: 0.12
+                    };
 
-                const renderer = new Renderer({
-                    dpr: Math.min(window.devicePixelRatio, 2),
-                    alpha: true,
-                    premultiplyAlpha: false
-                });
-                const gl = renderer.gl;
-                container.appendChild(gl.canvas);
-                gl.canvas.style.display = 'block';
-                gl.canvas.style.width = '100%';
-                gl.canvas.style.height = '100%';
 
-                const vert = `
+                    const renderer = new Renderer({
+                        dpr: Math.min(window.devicePixelRatio, 2),
+                        alpha: true,
+                        premultiplyAlpha: false
+                    });
+                    const gl = renderer.gl;
+                    container.appendChild(gl.canvas);
+                    gl.canvas.style.display = 'block';
+                    gl.canvas.style.width = '100%';
+                    gl.canvas.style.height = '100%';
+
+                    const vert = `
                     attribute vec2 position;
                     varying vec2 vUv;
                     void main() {
@@ -3066,7 +3069,7 @@
                     }
                 `;
 
-                const frag = `
+                    const frag = `
                     precision highp float;
                     uniform float iTime;
                     uniform vec2  iResolution;
@@ -3135,71 +3138,71 @@
                     }
                 `;
 
-                const uniforms = {
-                    iTime: { value: 0 },
-                    iResolution: { value: [1, 1] },
-                    rayPos: { value: [0, 0] },
-                    rayDir: { value: [0, 1] },
-                    raysColor: { value: hexToRgb(config.raysColor) },
-                    raysSpeed: { value: config.raysSpeed },
-                    lightSpread: { value: config.lightSpread },
-                    rayLength: { value: config.rayLength },
-                    pulsating: { value: config.pulsating ? 1.0 : 0.0 },
-                    fadeDistance: { value: config.fadeDistance },
-                    saturation: { value: config.saturation },
-                    mousePos: { value: [0.5, 0.5] },
-                    mouseInfluence: { value: config.mouseInfluence },
-                    noiseAmount: { value: config.noiseAmount },
-                    distortion: { value: config.distortion }
-                };
+                    const uniforms = {
+                        iTime: { value: 0 },
+                        iResolution: { value: [1, 1] },
+                        rayPos: { value: [0, 0] },
+                        rayDir: { value: [0, 1] },
+                        raysColor: { value: hexToRgb(config.raysColor) },
+                        raysSpeed: { value: config.raysSpeed },
+                        lightSpread: { value: config.lightSpread },
+                        rayLength: { value: config.rayLength },
+                        pulsating: { value: config.pulsating ? 1.0 : 0.0 },
+                        fadeDistance: { value: config.fadeDistance },
+                        saturation: { value: config.saturation },
+                        mousePos: { value: [0.5, 0.5] },
+                        mouseInfluence: { value: config.mouseInfluence },
+                        noiseAmount: { value: config.noiseAmount },
+                        distortion: { value: config.distortion }
+                    };
 
-                const geometry = new Triangle(gl);
-                const program = new Program(gl, {
-                    vertex: vert,
-                    fragment: frag,
-                    uniforms,
-                    transparent: true
-                });
-                const mesh = new Mesh(gl, { geometry, program });
+                    const geometry = new Triangle(gl);
+                    const program = new Program(gl, {
+                        vertex: vert,
+                        fragment: frag,
+                        uniforms,
+                        transparent: true
+                    });
+                    const mesh = new Mesh(gl, { geometry, program });
 
-                let mouse = { x: 0.5, y: 0.5 };
-                let smoothMouse = { x: 0.5, y: 0.5 };
+                    let mouse = { x: 0.5, y: 0.5 };
+                    let smoothMouse = { x: 0.5, y: 0.5 };
 
-                window.addEventListener('mousemove', (e) => {
-                    const rect = container.getBoundingClientRect();
-                    mouse.x = (e.clientX - rect.left) / rect.width;
-                    mouse.y = (e.clientY - rect.top) / rect.height;
-                });
+                    window.addEventListener('mousemove', (e) => {
+                        const rect = container.getBoundingClientRect();
+                        mouse.x = (e.clientX - rect.left) / rect.width;
+                        mouse.y = (e.clientY - rect.top) / rect.height;
+                    });
 
-                const resize = () => {
-                    const w = container.clientWidth;
-                    const h = container.clientHeight;
-                    renderer.setSize(w, h);
-                    uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
-                    const { anchor, dir } = getAnchorAndDir(config.raysOrigin, w * renderer.dpr, h * renderer.dpr);
-                    uniforms.rayPos.value = anchor;
-                    uniforms.rayDir.value = dir;
-                };
+                    const resize = () => {
+                        const w = container.clientWidth;
+                        const h = container.clientHeight;
+                        renderer.setSize(w, h);
+                        uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
+                        const { anchor, dir } = getAnchorAndDir(config.raysOrigin, w * renderer.dpr, h * renderer.dpr);
+                        uniforms.rayPos.value = anchor;
+                        uniforms.rayDir.value = dir;
+                    };
 
-                window.addEventListener('resize', resize);
-                resize();
+                    window.addEventListener('resize', resize);
+                    resize();
 
                 const update = (t) => {
+                        requestAnimationFrame(update);
+                        uniforms.iTime.value = t * 0.001;
+                        if (config.followMouse) {
+                            const s = 0.92;
+                            smoothMouse.x = smoothMouse.x * s + mouse.x * (1 - s);
+                            smoothMouse.y = smoothMouse.y * s + mouse.y * (1 - s);
+                            uniforms.mousePos.value = [smoothMouse.x, smoothMouse.y];
+                        }
+                        renderer.render({ scene: mesh });
+                    };
                     requestAnimationFrame(update);
-                    uniforms.iTime.value = t * 0.001;
-                    if (config.followMouse) {
-                        const s = 0.92;
-                        smoothMouse.x = smoothMouse.x * s + mouse.x * (1 - s);
-                        smoothMouse.y = smoothMouse.y * s + mouse.y * (1 - s);
-                        uniforms.mousePos.value = [smoothMouse.x, smoothMouse.y];
-                    }
-                    renderer.render({ scene: mesh });
                 };
-                requestAnimationFrame(update);
-            };
 
-            initLightRays();
-        });
+                initLightRays();
+            });
     </script>
 </body>
 
