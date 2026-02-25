@@ -232,8 +232,8 @@
         }
 
         .lanyard-canvas-container {
-            width: 450px;
-            height: 500px;
+            width: 500px;
+            height: 600px;
             position: relative;
             cursor: grab;
         }
@@ -2403,8 +2403,8 @@
             if (!container || window.innerWidth < 768) return;
 
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(20, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(0, 0, 24);
+            const camera = new THREE.PerspectiveCamera(25, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 1, 24);
 
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
@@ -2421,11 +2421,11 @@
             const dl3 = new THREE.DirectionalLight(0xffffff, 2); dl3.position.set(0, -2, 8); scene.add(dl3);
             const dl4 = new THREE.PointLight(0xffffff, 3, 50); dl4.position.set(0, 0, 10); scene.add(dl4);
 
-            // Rope physics (Verlet)
-            const N = 4, SL = 1.0, G = -40, D = 0.97, dt = 1 / 60;
+            // Rope physics (Verlet) - 6 segments, anchor at top (navbar level)
+            const N = 6, SL = 1.2, G = -40, D = 0.97, dt = 1 / 60;
             const pts = [], prv = [];
-            for (let i = 0; i < N; i++) { const p = new THREE.Vector3(i * 0.5, 4, 0); pts.push(p.clone()); prv.push(p.clone()); }
-            const anchor = new THREE.Vector3(0, 4, 0);
+            for (let i = 0; i < N; i++) { const p = new THREE.Vector3(i * 0.4, 8, 0); pts.push(p.clone()); prv.push(p.clone()); }
+            const anchor = new THREE.Vector3(0, 8, 0);
             pts[0].copy(anchor); prv[0].copy(anchor);
 
             let angVel = 0, dragging = false;
@@ -2441,14 +2441,14 @@
             cardTex.colorSpace = THREE.SRGBColorSpace;
             cardTex.wrapS = THREE.ClampToEdgeWrapping;
             cardTex.wrapT = THREE.ClampToEdgeWrapping;
-            // Zoom into face area: repeat < 1 = zoom in, offset = position
-            cardTex.repeat.set(0.45, 0.65);
-            cardTex.offset.set(0.22, 0.2);
+            // Zoom into face area: center top crop (like object-position: center top)
+            cardTex.repeat.set(0.4, 0.55);
+            cardTex.offset.set(0.28, 0.35);
 
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
-                m.scale.set(2.25, 2.25, 2.25);
-                m.position.set(0, -1.2, -0.05);
+                m.scale.set(3.0, 3.0, 3.0);
+                m.position.set(0, -1.6, -0.05);
                 m.traverse((c) => {
                     if (c.isMesh) {
                         if (c.material.name === 'base' || c.name === 'card') {
@@ -2485,7 +2485,7 @@
             }
 
             // Drag target
-            const dBox = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 1), new THREE.MeshBasicMaterial({ visible: false }));
+            const dBox = new THREE.Mesh(new THREE.BoxGeometry(3, 4, 1), new THREE.MeshBasicMaterial({ visible: false }));
             scene.add(dBox);
 
             function ndc(e) { const r = renderer.domElement.getBoundingClientRect(); mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1; mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1; }
@@ -2503,7 +2503,7 @@
                     const t = pts[i].clone(), v = pts[i].clone().sub(prv[i]).multiplyScalar(D);
                     pts[i].add(v); pts[i].y += G * dt * dt; prv[i].copy(t);
                 }
-                if (dragging) { const w = wp(), tg = w.clone().add(dOff); tg.y += 1.45; pts[N - 1].copy(tg); }
+                if (dragging) { const w = wp(), tg = w.clone().add(dOff); tg.y += 1.9; pts[N - 1].copy(tg); }
                 pts[0].copy(anchor);
 
                 for (let it = 0; it < 10; it++) {
@@ -2515,7 +2515,7 @@
                 }
 
                 const last = pts[N - 1];
-                cardGrp.position.set(last.x, last.y - 1.45, last.z);
+                cardGrp.position.set(last.x, last.y - 1.9, last.z);
                 const cv = last.clone().sub(prv[N - 1]);
                 angVel += (Math.atan2(cv.x, 1) * 0.3 - cardGrp.rotation.z) * 0.1;
                 angVel *= 0.92;
