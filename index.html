@@ -1546,14 +1546,18 @@
                 order: 2;
                 justify-content: center;
                 width: 100%;
+                margin-top: 20px;
             }
 
             .pc-card-wrapper {
-                display: none !important;
+                display: flex !important;
+                transform: scale(0.7);
+                transform-origin: center;
+                margin: -40px 0;
             }
 
             .mobile-avatar {
-                display: block !important;
+                display: none !important;
             }
 
             .avatar-container {
@@ -2106,6 +2110,53 @@
         .site-content.no-splash {
             opacity: 1;
             transition: none;
+        }
+
+        @media (max-width: 768px) {
+            #splashScreen {
+                padding-bottom: 8vh;
+            }
+
+            #splashScreen .splash-card-container {
+                transform: scale(0.75);
+                transform-origin: center;
+            }
+
+            @keyframes paperFall {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-100vh) rotate(-5deg) scale(0.75);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translateY(0) rotate(0deg) scale(0.75);
+                }
+            }
+
+            @keyframes groundShadow {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-50%) scaleX(0.2);
+                }
+
+                100% {
+                    opacity: 0.4;
+                    transform: translateX(-50%) scaleX(0.85);
+                }
+            }
+
+            @keyframes cardUnfoldDown {
+                0% {
+                    transform: perspective(1000px) rotateX(0deg) scale(0.75);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: perspective(1000px) rotateX(100deg) scale(0.9) translateY(-30px);
+                    opacity: 0;
+                }
+            }
         }
     </style>
 </head>
@@ -3185,10 +3236,19 @@
 
             function getOffsets(evt) {
                 var rect = shell.getBoundingClientRect();
-                return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+                var clientX = evt.clientX;
+                var clientY = evt.clientY;
+
+                if (evt.type.indexOf('touch') !== -1) {
+                    clientX = evt.touches[0].clientX;
+                    clientY = evt.touches[0].clientY;
+                }
+
+                return { x: clientX - rect.left, y: clientY - rect.top };
             }
 
             shell.addEventListener('pointerenter', function (e) {
+                if (e.pointerType === 'touch') return;
                 shell.classList.add('active');
                 shell.classList.add('entering');
                 if (enterTimer) clearTimeout(enterTimer);
@@ -3198,11 +3258,13 @@
             });
 
             shell.addEventListener('pointermove', function (e) {
+                if (e.pointerType === 'touch') return;
                 var o = getOffsets(e);
                 setTarget(o.x, o.y);
             });
 
-            shell.addEventListener('pointerleave', function () {
+            shell.addEventListener('pointerleave', function (e) {
+                if (e.pointerType === 'touch') return;
                 toCenter();
                 var checkSettle = function () {
                     var dx = targetX - currentX;
@@ -3216,6 +3278,25 @@
                 };
                 if (leaveRaf) cancelAnimationFrame(leaveRaf);
                 leaveRaf = requestAnimationFrame(checkSettle);
+            });
+
+            // Touch events for mobile
+            shell.addEventListener('touchstart', function (e) {
+                shell.classList.add('active');
+                var o = getOffsets(e);
+                setTarget(o.x, o.y);
+            }, { passive: true });
+
+            shell.addEventListener('touchmove', function (e) {
+                var o = getOffsets(e);
+                setTarget(o.x, o.y);
+            }, { passive: true });
+
+            shell.addEventListener('touchend', function () {
+                toCenter();
+                setTimeout(function () {
+                    shell.classList.remove('active');
+                }, 500);
             });
 
             // Initial animation: start from top-right corner and ease to center
@@ -3289,10 +3370,19 @@
 
                 // Listen for pointer movement on the splash screen itself
                 splash.addEventListener('pointermove', function (e) {
+                    if (e.pointerType === 'touch') return;
                     var rect = sShell.getBoundingClientRect();
                     sSetTarget(e.clientX - rect.left, e.clientY - rect.top);
                 });
+
+                splash.addEventListener('touchmove', function (e) {
+                    var rect = sShell.getBoundingClientRect();
+                    var touch = e.touches[0];
+                    sSetTarget(touch.clientX - rect.left, touch.clientY - rect.top);
+                }, { passive: true });
+
                 splash.addEventListener('pointerleave', function () { sToCenter(); });
+                splash.addEventListener('touchend', function () { sToCenter(); });
 
                 // Initial animation
                 var ix = (sShell.clientWidth || 300) - 70;
