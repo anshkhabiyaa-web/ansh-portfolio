@@ -1457,7 +1457,7 @@
 
             .mobile-nav-links a {
                 font-family: 'DM Serif Display', serif;
-                font-size: 36px;
+                font-size: 28px;
                 color: var(--text-color);
                 text-decoration: none;
                 transition: opacity 0.3s ease;
@@ -1512,11 +1512,17 @@
             }
 
             #hero h1 {
-                font-size: 36px;
+                font-size: 32px;
                 line-height: 1.15;
                 margin-bottom: 16px;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
+            }
+
+            @media (max-width: 375px) {
+                #hero h1 {
+                    font-size: 28px;
+                }
             }
 
             .hero-tag {
@@ -1570,9 +1576,20 @@
                 margin: 0 auto;
             }
 
-            .stat-badge,
-            .availability {
+            .stat-badge {
                 display: none !important;
+            }
+
+            .availability {
+                position: relative !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                margin: 10px auto 0 !important;
+                width: max-content;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.05);
+                color: var(--text-color);
+                border: 1px solid var(--border-color);
             }
 
             /* ===== ABOUT / PHILOSOPHY ===== */
@@ -1593,7 +1610,7 @@
             }
 
             .stats-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: 12px;
             }
 
@@ -1639,6 +1656,9 @@
             .tag {
                 font-size: 13px;
                 padding: 6px 14px;
+                display: inline-block;
+                max-width: 100%;
+                word-wrap: break-word;
             }
 
             /* Download CV button */
@@ -1681,6 +1701,8 @@
 
             .project-tag {
                 font-size: 11px;
+                max-width: 100%;
+                word-wrap: break-word;
             }
 
             .view-more-btn {
@@ -1711,8 +1733,10 @@
             .form-group input,
             .form-group textarea {
                 width: 100%;
-                font-size: 15px;
+                font-size: 16px;
+                /* 16px prevents iOS zoom on focus */
                 padding: 12px 0;
+                box-sizing: border-box;
             }
 
             .submit-btn {
@@ -2195,7 +2219,7 @@
                             <div class="pc-content">
                                 <div class="pc-details">
                                     <h3>Ansh Khabiya</h3>
-                                    <p>Product Designer &amp; Developer</p>
+                                    <p>I DON'T JUST CREATE. I SOLVE.</p>
                                 </div>
                             </div>
                         </div>
@@ -2242,10 +2266,11 @@
             <section id="hero">
                 <div class="container">
                     <div class="hero-left">
-                        <span class="hero-tag">Product Designer & Developer</span>
-                        <h1>Hello, I am <br><i>Ansh Khabiya.</i></h1>
-                        <p class="hero-bio">Based in India, I help brands and startups build thoughtful, user-centric
-                            interfaces and scalable web applications.</p>
+                        <span class="hero-tag">I DON'T JUST CREATE. I SOLVE.</span>
+                        <h1>Hello, I am Ansh Khabiya.</h1>
+                        <p class="hero-bio">I'm a Digital Strategy student passionate about building ideas that blend
+                            creativity with business thinking. I focus on creating impactful digital experiences backed
+                            by insight, research, and execution.</p>
                         <div class="hero-ctas">
                             <a href="#projects" class="btn btn-primary">View Work</a>
                         </div>
@@ -2281,7 +2306,7 @@
                                         <div class="pc-content">
                                             <div class="pc-details">
                                                 <h3>Ansh Khabiya</h3>
-                                                <p>Product Designer &amp; Developer</p>
+                                                <p>I DON'T JUST CREATE. I SOLVE.</p>
                                             </div>
                                         </div>
                                     </div>
