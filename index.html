@@ -603,6 +603,47 @@
             letter-spacing: 1px;
         }
 
+        /* --- Project Tabs --- */
+        .project-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .project-tabs::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 100px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+        }
+
+        .tab-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border-color: var(--text-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
         .tags {
             display: flex;
             flex-wrap: wrap;
@@ -1739,6 +1780,17 @@
                 font-size: 13px;
             }
 
+            /* Tabs on mobile */
+            .project-tabs {
+                margin-top: 20px;
+                gap: 10px;
+            }
+
+            .tab-btn {
+                padding: 8px 18px;
+                font-size: 13px;
+            }
+
             /* ===== CONTACT ===== */
             #contact .container {
                 display: flex;
@@ -2082,6 +2134,16 @@
                                 A curated selection of my recent projects, featuring digital marketing campaigns,
                                 leadership roles, and automation builds.
                             </p>
+
+                            <!-- Category Tabs -->
+                            <div class="project-tabs" id="projectTabs">
+                                <button class="tab-btn active" data-category="all">All</button>
+                                <button class="tab-btn" data-category="marketing">Marketing</button>
+                                <button class="tab-btn" data-category="leadership">Leadership</button>
+                                <button class="tab-btn" data-category="automation">Automation</button>
+                                <button class="tab-btn" data-category="strategy">Strategy</button>
+                            </div>
+
                             <button class="next-project-btn" id="nextProjectBtn">
                                 Next Project <span>→</span>
                             </button>
@@ -2472,30 +2534,35 @@
                 title: 'Khabiya Store',
                 image: 'khabiya_store.jpg',
                 tags: 'Family Business, Retail, Digital Marketing',
+                category: 'marketing, strategy',
                 description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'
             },
             {
                 title: 'Jai Hind Digital Nexus',
                 image: 'nexus_thumbnail.jpg',
                 tags: 'VP Marketing, Event, Sponsorships',
+                category: 'leadership, marketing',
                 description: 'Served as VP of Marketing for Nexus, a 2-day digital led cultural fest at Jai Hind College Mumbai. Brought in sponsorships and partnerships to secure and fund the event and helped establish the committee from ground up.'
             },
             {
                 title: 'Incubator & Accelerator Centre',
                 image: 'incubator_centre.jpg',
                 tags: 'VP Marketing, Events, Strategy',
+                category: 'marketing, strategy',
                 description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'
             },
             {
                 title: 'AI-Powered Builds & Automation',
                 emoji: '🤖',
                 tags: 'AI, No-Code, Automation, Web',
+                category: 'automation',
                 description: 'Built websites and digital tools using AI — including Google AI Studio, Zapier, N8N, Lovable, Antigravity, Cursor, Supabase, WordPress, Pomelio and Gemini'
             },
             {
                 title: 'Event Committees, Jai Hind College',
                 image: 'jaihind_events.jpg',
                 tags: 'Organising Committee, Events, College',
+                category: 'leadership',
                 description: '• Handled External Public Relations and networking for Family Business Hub\n• Managed Brand Relations and stakeholder networking for Jai Hind Business Conclave\n• Led Marketing for Talaash, the college cultural fest'
             }
         ];
@@ -2624,26 +2691,27 @@
         }
 
 
-        async function fetchProjects() {
-            // We use the FEATURED_PROJECTS as requested, but could merge with Supabase if needed
+        async function fetchProjects(filter = 'all') {
             const grid = document.getElementById('projectsGrid');
             grid.innerHTML = '';
 
+            // Clear interval before re-rendering
+            if (cardSwapInterval) clearInterval(cardSwapInterval);
+            if (cardSwapTimeline) cardSwapTimeline.kill();
+
             let projectsToShow = FEATURED_PROJECTS;
 
-            if (supabaseInstance) {
-                const { data, error } = await supabaseInstance.from('projects').select('*').order('created_at', { ascending: false });
-                if (data && data.length > 0) {
-                    // Combine or replace? User specifically asked for these 5. 
-                    // Let's stick to these 5 as requested for the animation.
-                }
+            if (filter !== 'all') {
+                projectsToShow = FEATURED_PROJECTS.filter(proj =>
+                    proj.category && proj.category.toLowerCase().includes(filter.toLowerCase())
+                );
             }
 
             projectsToShow.forEach(proj => {
                 const card = document.createElement('div');
                 card.className = 'project-card';
                 card.innerHTML = `
-                    <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : (proj.emoji || '🚀')}</div>
+                    <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : `<div style="font-size:100px">${proj.emoji || '🚀'}</div>`}</div>
                     <div class="project-info" style="padding: 20px;">
                         <div class="project-tags">
                             ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
@@ -2656,8 +2724,22 @@
                 grid.appendChild(card);
             });
 
+            // Re-init swap logic with filtered items
             initCardSwap();
         }
+
+        // --- TAB FILTERING LOGIC ---
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                // UI update
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Filter projects
+                const category = this.getAttribute('data-category');
+                fetchProjects(category);
+            });
+        });
 
         function openProjectModal(proj) {
             const modal = document.getElementById('projectModal');
