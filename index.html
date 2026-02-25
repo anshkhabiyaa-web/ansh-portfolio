@@ -20,8 +20,8 @@
         }
     }
     </script>
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase SDK (UMD build for global window.supabase) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         :root {
             --bg-color: #F7F5F0;
@@ -1955,11 +1955,14 @@
         // Initialize Supabase (Global object is 'supabase')
         let supabaseInstance = null;
         try {
-            if (typeof supabase !== 'undefined') {
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
                 supabaseInstance = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized successfully');
+            } else {
+                console.warn('Supabase SDK not loaded - global supabase object not found');
             }
         } catch (e) {
-            console.error("Supabase load failed:", e);
+            console.error("Supabase init failed:", e);
         }
 
         // --- INTERSECTION OBSERVER FOR FADE-IN ---
@@ -2169,18 +2172,26 @@
 
         // Sign in with Google
         googleLoginBtn.addEventListener('click', async () => {
-            if (!supabaseInstance) return;
+            if (!supabaseInstance) {
+                alert('Supabase is not initialized. Please check your Supabase URL and API key in the code.');
+                return;
+            }
             // Set flag to allow auto-showing dashboard after redirect
             sessionStorage.setItem('isLoggingIn', 'true');
-            const { error } = await supabaseInstance.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: window.location.origin + window.location.pathname
+            try {
+                const { error } = await supabaseInstance.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + window.location.pathname
+                    }
+                });
+                if (error) {
+                    sessionStorage.removeItem('isLoggingIn');
+                    alert('Login Error: ' + error.message);
                 }
-            });
-            if (error) {
+            } catch (err) {
                 sessionStorage.removeItem('isLoggingIn');
-                alert("Login Error: " + error.message);
+                alert('Login Error: ' + err.message);
             }
         });
 
@@ -2339,34 +2350,35 @@
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
 
-                if (!supabaseInstance) {
-                    alert("Supabase not initialized.");
-                    return;
-                }
-
-                const { data, error } = await supabaseInstance.from('profile').select('resume_url').eq('id', 1).single();
-
-                if (data && data.resume_url) {
-                    let finalUrl = data.resume_url;
-
-                    // Automatic conversion for Google Drive links to force download
-                    if (finalUrl.includes('drive.google.com')) {
-                        const driveIdMatch = finalUrl.match(/\/d\/(.+?)\//) || finalUrl.match(/id=(.+?)(&|$)/);
-                        if (driveIdMatch && driveIdMatch[1]) {
-                            finalUrl = `https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`;
+                // Try Supabase first
+                if (supabaseInstance) {
+                    try {
+                        const { data, error } = await supabaseInstance.from('profile').select('resume_url').eq('id', 1).single();
+                        if (data && data.resume_url) {
+                            let finalUrl = data.resume_url;
+                            if (finalUrl.includes('drive.google.com')) {
+                                const driveIdMatch = finalUrl.match(/\/d\/(.+?)\//) || finalUrl.match(/id=(.+?)(&|$)/);
+                                if (driveIdMatch && driveIdMatch[1]) {
+                                    finalUrl = `https://drive.google.com/uc?export=download&id=${driveIdMatch[1]}`;
+                                }
+                            }
+                            const link = document.createElement('a');
+                            link.href = finalUrl;
+                            link.target = '_blank';
+                            link.download = 'Ansh_Chauhan_CV.pdf';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            return;
                         }
+                    } catch (err) {
+                        console.warn('Supabase fetch failed, using fallback:', err);
                     }
-
-                    const link = document.createElement('a');
-                    link.href = finalUrl;
-                    link.target = '_blank';
-                    link.download = 'Ansh_Chauhan_CV.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } else {
-                    alert('Please add your Resume PDF URL in the Admin Settings tab.');
                 }
+
+                // Fallback: direct resume link
+                const fallbackUrl = 'https://drive.google.com/file/d/1wM_example_replace_with_real_id/view';
+                alert('Please set your Resume PDF URL in Admin Settings, or update the fallback URL in the code.');
             });
         });
 
