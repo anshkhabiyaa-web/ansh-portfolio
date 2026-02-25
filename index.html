@@ -2402,11 +2402,12 @@
             renderer.toneMappingExposure = 1.2;
             container.appendChild(renderer.domElement);
 
-            // Lighting
-            scene.add(new THREE.AmbientLight(0xffffff, 2.5));
-            const dl1 = new THREE.DirectionalLight(0xffffff, 2); dl1.position.set(5, 5, 5); scene.add(dl1);
-            const dl2 = new THREE.DirectionalLight(0xffffff, 1); dl2.position.set(-5, 3, 2); scene.add(dl2);
-            const dl3 = new THREE.DirectionalLight(0xffffff, 0.8); dl3.position.set(0, -2, 8); scene.add(dl3);
+            // Lighting (bright enough to see photo clearly)
+            scene.add(new THREE.AmbientLight(0xffffff, 4.0));
+            const dl1 = new THREE.DirectionalLight(0xffffff, 3); dl1.position.set(5, 5, 5); scene.add(dl1);
+            const dl2 = new THREE.DirectionalLight(0xffffff, 2); dl2.position.set(-5, 3, 2); scene.add(dl2);
+            const dl3 = new THREE.DirectionalLight(0xffffff, 2); dl3.position.set(0, -2, 8); scene.add(dl3);
+            const dl4 = new THREE.PointLight(0xffffff, 3, 50); dl4.position.set(0, 0, 10); scene.add(dl4);
 
             // Rope physics (Verlet)
             const N = 4, SL = 1.0, G = -40, D = 0.97, dt = 1 / 60;
@@ -2435,7 +2436,11 @@
                     if (c.isMesh) {
                         if (c.material.name === 'base' || c.name === 'card') {
                             c.material.map = cardTex;
-                            c.material.roughness = 0.9; c.material.metalness = 0.8;
+                            c.material.roughness = 0.3;
+                            c.material.metalness = 0.0;
+                            c.material.emissive = new THREE.Color(0xffffff);
+                            c.material.emissiveMap = cardTex;
+                            c.material.emissiveIntensity = 0.4;
                             c.material.map.anisotropy = 16;
                         }
                         if (c.material.name === 'metal') { c.material.roughness = 0.3; c.material.metalness = 1.0; }
@@ -2446,7 +2451,7 @@
             }, undefined, () => {
                 cardGrp.add(new THREE.Mesh(
                     new THREE.BoxGeometry(1.6, 2.25, 0.02),
-                    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.5, metalness: 0.8 })
+                    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.3, metalness: 0.0, emissive: 0xffffff, emissiveMap: cardTex, emissiveIntensity: 0.4 })
                 ));
             });
 
