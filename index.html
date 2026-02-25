@@ -3033,17 +3033,17 @@
 
                 const config = {
                     raysOrigin: 'top-center',
-                    raysColor: '#ffffff',
-                    raysSpeed: 0.4,
-                    lightSpread: 0.8,
-                    rayLength: 2.0,
+                    raysColor: '#B8A181', // Elegant Champagne/Gold tint for contrast
+                    raysSpeed: 0.3,       // Slightly slower for a more graceful feel
+                    lightSpread: 0.9,     // Wider spread
+                    rayLength: 2.2,       // Longer rays
                     pulsating: true,
-                    fadeDistance: 1.5,
+                    fadeDistance: 1.6,
                     saturation: 1.0,
                     followMouse: true,
                     mouseInfluence: 0.1,
                     noiseAmount: 0.1,
-                    distortion: 0.2
+                    distortion: 0.15
                 };
 
                 const renderer = new Renderer({
@@ -3124,8 +3124,9 @@
                         float brightness = 1.0 - distFromTop;
                         
                         fragColor.rgb = raysColor;
-                        fragColor.a = br * (0.5 + brightness * 0.5);
+                        fragColor.a = br * (0.6 + brightness * 0.4); // Enhanced alpha for visibility
                     }
+
 
                     void main() {
                         vec4 color;
