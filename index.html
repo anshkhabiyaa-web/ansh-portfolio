@@ -2886,17 +2886,13 @@
 
         let galleryInstance = null;
 
-        async function fetchProjects(filter = 'all') {
+        // --- INITIALIZE PROJECTS ---
+        async function fetchProjects() {
             const container = document.getElementById('projectsGallery');
             if (galleryInstance) galleryInstance.destroy();
 
-            let projectsToShow = FEATURED_PROJECTS;
-            if (filter !== 'all') {
-                projectsToShow = FEATURED_PROJECTS.filter(proj => proj.category && proj.category.toLowerCase().includes(filter.toLowerCase()));
-            }
-
             galleryInstance = new CircularGalleryApp(container, {
-                items: projectsToShow,
+                items: FEATURED_PROJECTS,
                 bend: 1.5,
                 textColor: '#1a1a1a',
                 borderRadius: 0.04,
@@ -2904,19 +2900,6 @@
                 scrollEase: 0.08
             });
         }
-
-        // --- TAB FILTERING LOGIC ---
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                // UI update
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                // Filter projects
-                const category = this.getAttribute('data-category');
-                fetchProjects(category);
-            });
-        });
 
         function openProjectModal(proj) {
             const modal = document.getElementById('projectModal');
