@@ -1843,16 +1843,17 @@
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #0a0a0a;
+            background: #080808;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            padding-bottom: 12vh;
             cursor: pointer;
             overflow: hidden;
         }
 
-        /* Subtle paper grain on the entire splash bg */
+        /* Subtle grain texture on splash background */
         #splashScreen::before {
             content: '';
             position: absolute;
@@ -1866,26 +1867,26 @@
 
         #splashScreen .splash-card-container {
             pointer-events: none;
-            perspective: 1200px;
-            animation: paperDrop 1.4s cubic-bezier(0.22, 1.2, 0.36, 1) forwards;
+            position: relative;
+            animation: paperFall 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
-        /* Paper drop shadow on the ground underneath */
+        /* Ground shadow under the card */
         #splashScreen .splash-card-container::after {
             content: '';
             position: absolute;
-            bottom: -40px;
+            bottom: -35px;
             left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 30px;
-            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+            transform: translateX(-50%) scaleX(0.2);
+            width: 70%;
+            height: 25px;
+            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
             border-radius: 50%;
-            animation: shadowGrow 1.4s cubic-bezier(0.22, 1.2, 0.36, 1) forwards;
-            filter: blur(8px);
+            filter: blur(10px);
+            animation: groundShadow 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
-        /* Paper texture overlay on the card itself */
+        /* Paper texture on the card */
         #splashScreen .pc-card::after {
             content: '';
             position: absolute;
@@ -1899,100 +1900,124 @@
             mix-blend-mode: overlay;
         }
 
-        /* Card has slightly soft edges like paper */
+        /* Realistic paper shadow */
         #splashScreen .pc-card {
             box-shadow:
-                rgba(0, 0, 0, 0.8) calc((var(--pointer-from-left) * 10px) - 3px) calc((var(--pointer-from-top) * 20px) - 6px) 20px -5px,
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                0 2px 8px rgba(0, 0, 0, 0.3),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+                rgba(0, 0, 0, 0.7) calc((var(--pointer-from-left) * 8px) - 3px) calc((var(--pointer-from-top) * 16px) - 4px) 18px -5px,
+                0 10px 40px rgba(0, 0, 0, 0.45),
+                0 3px 10px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.04);
         }
 
-        @keyframes paperDrop {
+        /* --- Paper Fall: natural descent with air-resistance sway --- */
+        @keyframes paperFall {
             0% {
                 opacity: 0;
-                transform: translateY(-120vh) rotate3d(1, 0.2, 0, 35deg) scale(0.8);
+                transform: translateY(-110vh) rotate(-8deg);
             }
 
-            50% {
+            15% {
                 opacity: 1;
+                transform: translateY(-70vh) rotate(5deg);
             }
 
-            75% {
-                transform: translateY(8px) rotate3d(1, 0.1, 0, -3deg) scale(1.01);
+            35% {
+                transform: translateY(-35vh) rotate(-3deg);
             }
 
-            85% {
-                transform: translateY(-4px) rotate3d(1, 0, 0, 2deg) scale(0.995);
+            55% {
+                transform: translateY(-10vh) rotate(1.5deg);
+            }
+
+            72% {
+                transform: translateY(6px) rotate(-0.8deg);
+            }
+
+            84% {
+                transform: translateY(-3px) rotate(0.3deg);
+            }
+
+            92% {
+                transform: translateY(1px) rotate(-0.1deg);
             }
 
             100% {
                 opacity: 1;
-                transform: translateY(0) rotate3d(0, 0, 0, 0deg) scale(1);
+                transform: translateY(0) rotate(0deg);
             }
         }
 
-        @keyframes shadowGrow {
+        @keyframes groundShadow {
             0% {
                 opacity: 0;
-                transform: translateX(-50%) scaleX(0.3);
+                transform: translateX(-50%) scaleX(0.2);
+            }
+
+            60% {
+                opacity: 0.3;
+                transform: translateX(-50%) scaleX(0.6);
             }
 
             75% {
-                opacity: 0.8;
-                transform: translateX(-50%) scaleX(1.05);
+                opacity: 0.7;
+                transform: translateX(-50%) scaleX(1.06);
             }
 
             100% {
-                opacity: 0.6;
+                opacity: 0.5;
                 transform: translateX(-50%) scaleX(1);
             }
         }
 
-        /* Unfold exit animation */
+        /* --- Unfold Exit: card opens downward from top hinge --- */
         #splashScreen.unfold .splash-card-container {
-            animation: paperUnfold 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform-origin: top center;
+            animation: cardUnfoldDown 1.2s cubic-bezier(0.4, 0, 0.15, 1) forwards;
         }
 
         #splashScreen.unfold .splash-card-container::after {
-            animation: shadowFade 0.6s ease forwards;
+            animation: shadowVanish 0.5s ease forwards;
         }
 
         #splashScreen.unfold {
-            animation: splashReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: bgReveal 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        @keyframes paperUnfold {
+        @keyframes cardUnfoldDown {
             0% {
-                transform: perspective(1200px) translateY(0) rotateX(0deg) scale(1);
+                transform: perspective(1000px) rotateX(0deg) scale(1);
                 opacity: 1;
             }
 
-            30% {
-                transform: perspective(1200px) translateY(-20px) rotateX(-15deg) scale(1.05);
+            20% {
+                transform: perspective(1000px) rotateX(0deg) scale(1.02) translateY(-8px);
                 opacity: 1;
+            }
+
+            50% {
+                transform: perspective(1000px) rotateX(40deg) scale(1.06) translateY(-20px);
+                opacity: 0.9;
             }
 
             100% {
-                transform: perspective(1200px) translateY(-60px) rotateX(90deg) scale(1.3);
+                transform: perspective(1000px) rotateX(110deg) scale(1.15) translateY(-50px);
                 opacity: 0;
             }
         }
 
-        @keyframes shadowFade {
+        @keyframes shadowVanish {
             to {
                 opacity: 0;
-                transform: translateX(-50%) scaleX(0.3);
+                transform: translateX(-50%) scaleX(0.2);
+                filter: blur(20px);
             }
         }
 
-        @keyframes splashReveal {
-            0% {
-                background: #0a0a0a;
-            }
+        @keyframes bgReveal {
 
-            60% {
-                background: #0a0a0a;
+            0%,
+            50% {
+                background: #080808;
             }
 
             100% {
@@ -2003,30 +2028,42 @@
 
         #splashScreen .splash-hint {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.25);
             letter-spacing: 2px;
             text-transform: uppercase;
             font-family: 'DM Sans', sans-serif;
-            animation: hintPulse 2.5s ease-in-out infinite;
+            animation: hintFadeIn 0.8s ease 2s both, hintPulse 2.5s ease-in-out 2.8s infinite;
             z-index: 1;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
         #splashScreen.unfold .splash-hint {
             opacity: 0;
         }
 
+        @keyframes hintFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @keyframes hintPulse {
 
             0%,
             100% {
-                opacity: 0.3;
+                opacity: 0.25;
             }
 
             50% {
-                opacity: 0.65;
+                opacity: 0.6;
             }
         }
 
@@ -2039,7 +2076,6 @@
             opacity: 1;
         }
 
-        /* When splash is skipped (returning visit), show site immediately */
         .site-content.no-splash {
             opacity: 1;
             transition: none;
@@ -3240,21 +3276,21 @@
                 sStart();
             }
 
-            // Dismiss splash on click — paper unfold animation
+            // Dismiss splash on click — unfold downward from top hinge
             splash.addEventListener('click', function () {
-                if (splash.classList.contains('unfold')) return; // prevent double-click
+                if (splash.classList.contains('unfold')) return;
                 splash.classList.add('unfold');
 
-                // After the card flip animation (1s), start fading in site content
+                // Fade in site content as card unfolds away
                 setTimeout(function () {
                     siteContent.classList.add('visible');
-                }, 600);
+                }, 700);
 
-                // Remove splash entirely after all animations complete
+                // Remove splash after all animations complete
                 setTimeout(function () {
                     splash.style.display = 'none';
                     if (sRafId) cancelAnimationFrame(sRafId);
-                }, 1300);
+                }, 1500);
             });
         })();
     </script>
