@@ -2423,10 +2423,15 @@
             scene.add(cardGrp);
 
             // Load GLB
-            // Load user photo for card texture
+            // Load user photo - crop & center face on card
             const cardTex = new THREE.TextureLoader().load('ansh_card.jpg');
             cardTex.flipY = false;
             cardTex.colorSpace = THREE.SRGBColorSpace;
+            cardTex.wrapS = THREE.ClampToEdgeWrapping;
+            cardTex.wrapT = THREE.ClampToEdgeWrapping;
+            // Zoom into face area: repeat < 1 = zoom in, offset = position
+            cardTex.repeat.set(0.45, 0.65);
+            cardTex.offset.set(0.22, 0.2);
 
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
@@ -2436,11 +2441,10 @@
                     if (c.isMesh) {
                         if (c.material.name === 'base' || c.name === 'card') {
                             c.material.map = cardTex;
-                            c.material.roughness = 0.3;
+                            c.material.roughness = 0.5;
                             c.material.metalness = 0.0;
-                            c.material.emissive = new THREE.Color(0xffffff);
-                            c.material.emissiveMap = cardTex;
-                            c.material.emissiveIntensity = 0.4;
+                            c.material.emissive = new THREE.Color(0x000000);
+                            c.material.emissiveIntensity = 0;
                             c.material.map.anisotropy = 16;
                         }
                         if (c.material.name === 'metal') { c.material.roughness = 0.3; c.material.metalness = 1.0; }
@@ -2451,7 +2455,7 @@
             }, undefined, () => {
                 cardGrp.add(new THREE.Mesh(
                     new THREE.BoxGeometry(1.6, 2.25, 0.02),
-                    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.3, metalness: 0.0, emissive: 0xffffff, emissiveMap: cardTex, emissiveIntensity: 0.4 })
+                    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.5, metalness: 0.0 })
                 ));
             });
 
