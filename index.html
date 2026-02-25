@@ -3021,12 +3021,16 @@
         };
 
         const initLightRays = () => {
+            console.log('Initializing Light Rays...');
             const container = document.getElementById('lightRays');
-            if (!container) return;
+            if (!container) {
+                console.error('LightRays container not found!');
+                return;
+            }
 
             const config = {
                 raysOrigin: 'top-center',
-                raysColor: '#ffffff',
+                raysColor: '#3498db', // Using a visible blue for debugging
                 raysSpeed: 0.8,
                 lightSpread: 0.6,
                 rayLength: 1.5,
@@ -3039,12 +3043,21 @@
                 distortion: 0.2
             };
 
+
             const renderer = new Renderer({
                 dpr: Math.min(window.devicePixelRatio, 2),
-                alpha: true
+                alpha: true,
+                premultiplyAlpha: false
             });
             const gl = renderer.gl;
+            console.log('WebGL Context:', gl);
             container.appendChild(gl.canvas);
+
+            // Set canvas styles to ensure visibility
+            gl.canvas.style.display = 'block';
+            gl.canvas.style.width = '100%';
+            gl.canvas.style.height = '100%';
+
 
             const vert = `
                 attribute vec2 position;
@@ -3113,8 +3126,11 @@
                         fragColor.rgb *= (1.0 - noiseAmount + noiseAmount * n);
                     }
                     float brightness = 1.0 - (coord.y / iResolution.y);
+                    fragColor.rgb *= (0.2 + brightness * 0.8); // Use brightness to fade out as it goes down
                     fragColor.rgb *= raysColor;
+                    fragColor.a *= (0.5 + brightness * 0.5); // Also fade alpha
                 }
+
 
                 void main() {
                     vec4 color;
@@ -3184,7 +3200,9 @@
                 renderer.render({ scene: mesh });
             };
             requestAnimationFrame(update);
+            console.log('Light Rays started loop.');
         };
+
 
         initLightRays();
     </script>
