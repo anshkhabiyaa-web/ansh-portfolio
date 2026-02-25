@@ -691,88 +691,32 @@
 
         /* --- Projects --- */
 
-        /* --- Card Swapping Projects --- */
+        /* --- Circular Gallery --- */
         .projects-flex-wrapper {
             display: flex;
-            align-items: flex-start;
-            gap: 60px;
-            margin-top: 80px;
-        }
-
-        .projects-header {
-            flex: 0 0 350px;
-            display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 40px;
+            margin-top: 60px;
         }
 
-        .projects-header h2 {
-            font-size: 64px !important;
-            line-height: 1.1;
-            margin-bottom: 0 !important;
-            text-align: left !important;
-        }
-
-        .projects-intro {
-            font-size: 18px;
-            opacity: 0.7;
-            max-width: 300px;
-        }
-
-        .next-project-btn {
-            align-self: flex-start;
-            padding: 15px 30px;
-            border: 1px solid var(--text-color);
-            background: transparent;
-            color: var(--text-color);
-            border-radius: 100px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-        }
-
-        .next-project-btn:hover {
-            background: var(--text-color);
-            color: var(--bg-color);
-        }
-
-        .card-swap-container {
+        .circular-gallery {
+            width: 100%;
+            height: 600px;
             position: relative;
-            flex: 1;
-            max-width: 500px;
-            height: 400px;
-            perspective: 1500px;
-            /* Tighter spacing at the bottom */
-            padding-bottom: 20px;
+            cursor: grab;
+            overflow: hidden;
+            border-radius: 24px;
+            background: rgba(0, 0, 0, 0.02);
         }
 
+        .circular-gallery:active {
+            cursor: grabbing;
+        }
 
-
-        .project-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+        .circular-gallery canvas {
+            display: block;
             width: 100%;
             height: 100%;
-            background: #fff;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            transition: box-shadow 0.3s ease;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .project-card:hover {
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
         }
 
 
@@ -972,6 +916,35 @@
             align-self: flex-start;
             margin-top: 20px;
             background: white;
+
+            /* --- Circular Gallery --- */
+            .projects-flex-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 40px;
+                margin-top: 60px;
+            }
+
+            .circular-gallery {
+                width: 100%;
+                height: 600px;
+                position: relative;
+                cursor: grab;
+                overflow: hidden;
+                border-radius: 24px;
+                background: rgba(0, 0, 0, 0.02);
+            }
+
+            .circular-gallery:active {
+                cursor: grabbing;
+            }
+
+            .circular-gallery canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+
             color: black;
             border: none;
             padding: 18px 45px;
@@ -1447,8 +1420,6 @@
                 position: absolute;
                 top: 18px;
                 right: 20px;
-                background: none;
-                border: none;
                 font-size: 36px;
                 color: var(--text-color);
                 cursor: pointer;
@@ -1706,48 +1677,14 @@
 
             /* ===== SELECTED WORK / PROJECTS ===== */
             .projects-flex-wrapper {
-                flex-direction: column;
-                gap: 40px;
-                /* Reduced gap */
-                margin-top: 30px;
+                margin-top: 40px;
+                gap: 30px;
             }
 
-            .projects-header {
-                flex: none;
-                width: 100%;
-                text-align: left;
-                /* Changed from center to left */
-                align-items: flex-start;
-                /* Changed from center to flex-start */
+            .circular-gallery {
+                height: 450px;
+                border-radius: 16px;
             }
-
-            .projects-header h2 {
-                font-size: 38px !important;
-                text-align: left !important;
-                /* Changed from center to left */
-            }
-
-            .projects-intro {
-                text-align: left;
-                max-width: 100%;
-            }
-
-            .next-project-btn {
-                align-self: flex-start;
-                /* Ensure left-aligned */
-            }
-
-            .card-swap-container {
-                margin: 0 auto;
-                width: 100%;
-                max-width: 100%;
-                padding-bottom: 20px;
-                transform: scale(0.92);
-                /* Slightly larger for visibility */
-                margin-top: -20px;
-                /* Pull up closer to title */
-            }
-
 
             .project-card {
                 width: 100%;
@@ -2131,8 +2068,7 @@
                         <div class="projects-header">
                             <h2>Selected Work</h2>
                             <p class="projects-intro">
-                                A curated selection of my recent projects, featuring digital marketing campaigns,
-                                leadership roles, and automation builds.
+                                A curated selection of my recent projects. Scroll or drag to explore.
                             </p>
 
                             <!-- Category Tabs -->
@@ -2143,14 +2079,10 @@
                                 <button class="tab-btn" data-category="automation">Automation</button>
                                 <button class="tab-btn" data-category="strategy">Strategy</button>
                             </div>
+                        </div>
 
-                            <button class="next-project-btn" id="nextProjectBtn">
-                                Next Project <span>→</span>
-                            </button>
-                        </div>
-                        <div class="card-swap-container" id="projectsGrid">
-                            <!-- Projects will be stacked here by JavaScript -->
-                        </div>
+                        <!-- Circular Gallery Container -->
+                        <div id="projectsGallery" class="circular-gallery"></div>
                     </div>
                 </div>
             </section>
@@ -2567,165 +2499,410 @@
             }
         ];
 
-        let cardSwapInterval;
-        let cardSwapTimeline;
-        let cardOrder = [];
-        let cardRefs = [];
+        // --- CIRCULAR GALLERY OGL CLASSES ---
+        const { Camera: OGLCamera, Mesh: OGLMesh, Plane: OGLPlane, Program: OGLProgram, Renderer: OGLRenderer, Texture: OGLTexture, Transform: OGLTransform } = ogl;
 
-        function initCardSwap() {
-            const container = document.getElementById('projectsGrid');
-            const cards = container.querySelectorAll('.project-card');
-            if (cards.length < 2) return;
-
-            cardRefs = Array.from(cards);
-            cardOrder = cardRefs.map((_, i) => i);
-
-            // Distance settings from ReactBits
-            const cardDistance = window.innerWidth < 768 ? 30 : 60;
-            const verticalDistance = window.innerWidth < 768 ? 40 : 70;
-            const skewAmount = 6;
-            const total = cardRefs.length;
-
-            const makeSlot = (i, distX, distY, total) => ({
-                x: i * distX,
-                y: -i * distY,
-                z: -i * distX * 1.5,
-                zIndex: total - i
-            });
-
-            const placeNow = (el, slot, skew) =>
-                gsap.set(el, {
-                    x: slot.x,
-                    y: slot.y,
-                    z: slot.z,
-                    xPercent: -50,
-                    yPercent: -50,
-                    skewY: skew,
-                    transformOrigin: 'center center',
-                    zIndex: slot.zIndex,
-                    force3D: true
-                });
-
-            cardRefs.forEach((el, i) => placeNow(el, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
-
-            const config = {
-                ease: 'elastic.out(0.6,0.9)',
-                durDrop: 2,
-                durMove: 2,
-                durReturn: 2,
-                promoteOverlap: 0.9,
-                returnDelay: 0.05
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                window.clearTimeout(timeout);
+                timeout = window.setTimeout(() => func.apply(this, args), wait);
             };
-
-            const swap = () => {
-                if (cardOrder.length < 2) return;
-
-                const [front, ...rest] = cardOrder;
-                const elFront = cardRefs[front];
-                const tl = gsap.timeline();
-                cardSwapTimeline = tl;
-
-                tl.to(elFront, {
-                    y: '+=500',
-                    duration: config.durDrop,
-                    ease: config.ease
-                });
-
-                tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
-                rest.forEach((idx, i) => {
-                    const el = cardRefs[idx];
-                    const slot = makeSlot(i, cardDistance, verticalDistance, total);
-                    tl.set(el, { zIndex: slot.zIndex }, 'promote');
-                    tl.to(el, {
-                        x: slot.x,
-                        y: slot.y,
-                        z: slot.z,
-                        duration: config.durMove,
-                        ease: config.ease
-                    }, `promote+=${i * 0.15}`);
-                });
-
-                const backSlot = makeSlot(total - 1, cardDistance, verticalDistance, total);
-                tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
-                tl.call(() => {
-                    gsap.set(elFront, { zIndex: backSlot.zIndex });
-                }, null, 'return');
-                tl.to(elFront, {
-                    x: backSlot.x,
-                    y: backSlot.y,
-                    z: backSlot.z,
-                    duration: config.durReturn,
-                    ease: config.ease
-                }, 'return');
-
-                tl.call(() => {
-                    cardOrder = [...rest, front];
-                });
-            };
-
-            const resetInterval = () => {
-                if (cardSwapInterval) clearInterval(cardSwapInterval);
-                cardSwapInterval = setInterval(swap, 5000);
-            };
-
-            cardSwapInterval = setInterval(swap, 5000);
-
-            // Manual Navigation
-            const nextBtn = document.getElementById('nextProjectBtn');
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    swap();
-                    resetInterval(); // Restart frequency timer on manual click
-                });
-            }
-
-            container.addEventListener('mouseenter', () => {
-                if (cardSwapTimeline) cardSwapTimeline.pause();
-                clearInterval(cardSwapInterval);
-            });
-
-            container.addEventListener('mouseleave', () => {
-                if (cardSwapTimeline) cardSwapTimeline.play();
-                resetInterval();
-            });
         }
 
+        function lerp(p1, p2, t) {
+            return p1 + (p2 - p1) * t;
+        }
 
-        async function fetchProjects(filter = 'all') {
-            const grid = document.getElementById('projectsGrid');
-            grid.innerHTML = '';
+        function createTextTexture(gl, text, font = 'bold 30px Figtree', color = 'black') {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = font;
+            const metrics = context.measureText(text);
+            const textWidth = Math.ceil(metrics.width);
+            const fontSize = parseInt(font.match(/(\d+)px/)[1], 10) || 30;
+            const textHeight = Math.ceil(fontSize * 1.2);
 
-            // Clear interval before re-rendering
-            if (cardSwapInterval) clearInterval(cardSwapInterval);
-            if (cardSwapTimeline) cardSwapTimeline.kill();
+            canvas.width = textWidth + 40;
+            canvas.height = textHeight + 40;
 
-            let projectsToShow = FEATURED_PROJECTS;
+            context.font = font;
+            context.fillStyle = color;
+            context.textBaseline = 'middle';
+            context.textAlign = 'center';
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
 
-            if (filter !== 'all') {
-                projectsToShow = FEATURED_PROJECTS.filter(proj =>
-                    proj.category && proj.category.toLowerCase().includes(filter.toLowerCase())
-                );
+            const texture = new OGLTexture(gl, { generateMipmaps: false });
+            texture.image = canvas;
+            return { texture, width: canvas.width, height: canvas.height };
+        }
+
+        class Title {
+            constructor({ gl, plane, renderer, text, textColor = '#1a1a1a', font = 'bold 30px Figtree' }) {
+                this.gl = gl;
+                this.plane = plane;
+                this.renderer = renderer;
+                this.text = text;
+                this.textColor = textColor;
+                this.font = font;
+                this.createMesh();
             }
 
-            projectsToShow.forEach(proj => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = `
-                    <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : `<div style="font-size:100px">${proj.emoji || '🚀'}</div>`}</div>
-                    <div class="project-info" style="padding: 20px;">
-                        <div class="project-tags">
-                            ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
-                        </div>
-                        <h3 style="margin-top: 10px;">${proj.title}</h3>
-                        <div class="view-more-btn" style="margin-top: auto;">Read More →</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => openProjectModal(proj));
-                grid.appendChild(card);
-            });
+            createMesh() {
+                const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
+                const geometry = new OGLPlane(this.gl);
+                const program = new OGLProgram(this.gl, {
+                    vertex: `
+                        attribute vec3 position;
+                        attribute vec2 uv;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `,
+                    fragment: `
+                        precision highp float;
+                        uniform sampler2D tMap;
+                        varying vec2 vUv;
+                        void main() {
+                            vec4 color = texture2D(tMap, vUv);
+                            if (color.a < 0.1) discard;
+                            gl_FragColor = color;
+                        }
+                    `,
+                    uniforms: { tMap: { value: texture } },
+                    transparent: true
+                });
+                this.mesh = new OGLMesh(this.gl, { geometry, program });
+                const aspect = width / height;
+                const textHeightScaled = this.plane.scale.y * 0.12;
+                const textWidthScaled = textHeightScaled * aspect;
+                this.mesh.scale.set(textWidthScaled, textHeightScaled, 1);
+                this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeightScaled * 0.7;
+                this.mesh.setParent(this.plane);
+            }
+        }
 
-            // Re-init swap logic with filtered items
-            initCardSwap();
+        class Media {
+            constructor({ geometry, gl, image, index, length, renderer, scene, screen, text, viewport, bend, textColor, borderRadius, font, projectData }) {
+                this.extra = 0;
+                this.geometry = geometry;
+                this.gl = gl;
+                this.image = image;
+                this.index = index;
+                this.length = length;
+                this.renderer = renderer;
+                this.scene = scene;
+                this.screen = screen;
+                this.text = text;
+                this.viewport = viewport;
+                this.bend = bend;
+                this.textColor = textColor;
+                this.borderRadius = borderRadius;
+                this.font = font;
+                this.projectData = projectData;
+                this.createShader();
+                this.createMesh();
+                this.createTitle();
+                this.onResize();
+            }
+
+            createShader() {
+                const texture = new OGLTexture(this.gl, { generateMipmaps: true });
+                this.program = new OGLProgram(this.gl, {
+                    depthTest: false,
+                    depthWrite: false,
+                    vertex: `
+                        precision highp float;
+                        attribute vec3 position;
+                        attribute vec2 uv;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+                        uniform float uTime;
+                        uniform float uSpeed;
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            vec3 p = position;
+                            p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + abs(uSpeed) * 0.5);
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+                        }
+                    `,
+                    fragment: `
+                        precision highp float;
+                        uniform vec2 uImageSizes;
+                        uniform vec2 uPlaneSizes;
+                        uniform sampler2D tMap;
+                        uniform float uBorderRadius;
+                        varying vec2 vUv;
+                        
+                        float roundedBoxSDF(vec2 p, vec2 b, float r) {
+                            vec2 d = abs(p) - b;
+                            return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+                        }
+                        
+                        void main() {
+                            vec2 ratio = vec2(
+                                min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
+                                min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
+                            );
+                            vec2 uv = vec2(
+                                vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
+                                vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
+                            );
+                            vec4 color = texture2D(tMap, uv);
+                            float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+                            float edgeSmooth = 0.002;
+                            float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
+                            gl_FragColor = vec4(color.rgb, alpha);
+                        }
+                    `,
+                    uniforms: {
+                        tMap: { value: texture },
+                        uPlaneSizes: { value: [0, 0] },
+                        uImageSizes: { value: [0, 0] },
+                        uSpeed: { value: 0 },
+                        uTime: { value: 100 * Math.random() },
+                        uBorderRadius: { value: this.borderRadius }
+                    },
+                    transparent: true
+                });
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.src = this.image;
+                img.onload = () => {
+                    texture.image = img;
+                    this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+                };
+            }
+
+            createMesh() {
+                this.plane = new OGLMesh(this.gl, { geometry: this.geometry, program: this.program });
+                this.plane.setParent(this.scene);
+                // Tag for raycasting
+                this.plane.projectData = this.projectData;
+            }
+
+            createTitle() {
+                this.title = new Title({ gl: this.gl, plane: this.plane, renderer: this.renderer, text: this.text, textColor: this.textColor, font: this.font });
+            }
+
+            update(scroll, direction) {
+                this.plane.position.x = this.x - scroll.current - this.extra;
+                const x = this.plane.position.x;
+                const H = this.viewport.width / 2;
+                if (this.bend !== 0) {
+                    const B_abs = Math.abs(this.bend);
+                    const R = (H * H + B_abs * B_abs) / (2 * B_abs);
+                    const effectiveX = Math.min(Math.abs(x), H);
+                    const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
+                    if (this.bend > 0) {
+                        this.plane.position.y = -arc;
+                        this.plane.rotation.z = -Math.sign(x) * Math.asin(effectiveX / R);
+                    } else {
+                        this.plane.position.y = arc;
+                        this.plane.rotation.z = Math.sign(x) * Math.asin(effectiveX / R);
+                    }
+                }
+                this.program.uniforms.uTime.value += 0.04;
+                this.program.uniforms.uSpeed.value = scroll.current - scroll.last;
+                const planeOffset = this.plane.scale.x / 2;
+                const viewportOffset = this.viewport.width / 2;
+                this.isBefore = this.plane.position.x + planeOffset < -viewportOffset;
+                this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
+                if (direction === 'right' && this.isBefore) {
+                    this.extra -= this.widthTotal;
+                    this.isBefore = this.isAfter = false;
+                }
+                if (direction === 'left' && this.isAfter) {
+                    this.extra += this.widthTotal;
+                    this.isBefore = this.isAfter = false;
+                }
+            }
+
+            onResize({ screen, viewport } = {}) {
+                if (screen) this.screen = screen;
+                if (viewport) this.viewport = viewport;
+                const scaleFactor = this.screen.width < 768 ? 0.6 : 1.0;
+                this.scale = (this.screen.height / 1500) * scaleFactor;
+                this.plane.scale.y = (this.viewport.height * (800 * this.scale)) / this.screen.height;
+                this.plane.scale.x = (this.viewport.width * (600 * this.scale)) / this.screen.width;
+                this.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
+                this.padding = 1.5;
+                this.width = this.plane.scale.x + this.padding;
+                this.widthTotal = this.width * this.length;
+                this.x = this.width * this.index;
+            }
+        }
+
+        class CircularGalleryApp {
+            constructor(container, { items, bend = 3, textColor = '#1a1a1a', borderRadius = 0.05, font = 'bold 30px Figtree', scrollSpeed = 2, scrollEase = 0.05 }) {
+                this.container = container;
+                this.scrollSpeed = scrollSpeed;
+                this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+                this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
+                this.medias = [];
+                this.isDown = false;
+                this.start = 0;
+                this.createRenderer();
+                this.createCamera();
+                this.createScene();
+                this.onResize();
+                this.createGeometry();
+                this.createMedias(items, bend, textColor, borderRadius, font);
+                this.update();
+                this.addEventListeners();
+            }
+
+            createRenderer() {
+                this.renderer = new OGLRenderer({ alpha: true, antialias: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
+                this.gl = this.renderer.gl;
+                this.container.appendChild(this.gl.canvas);
+            }
+
+            createCamera() {
+                this.camera = new OGLCamera(this.gl);
+                this.camera.fov = 45;
+                this.camera.position.z = 20;
+            }
+
+            createScene() { this.scene = new OGLTransform(); }
+
+            createGeometry() { this.planeGeometry = new OGLPlane(this.gl, { heightSegments: 50, widthSegments: 100 }); }
+
+            createMedias(items, bend, textColor, borderRadius, font) {
+                const galleryItems = items.concat(items).concat(items); // Triple for infinite scroll buffer
+                this.medias = galleryItems.map((data, index) => new Media({
+                    geometry: this.planeGeometry, gl: this.gl, image: data.image || `https://picsum.photos/seed/${index}/800/600`, index, length: galleryItems.length,
+                    renderer: this.renderer, scene: this.scene, screen: this.screen, text: data.title, viewport: this.viewport, bend, textColor, borderRadius, font, projectData: data
+                }));
+            }
+
+            onTouchDown(e) {
+                this.isDown = true;
+                this.scroll.position = this.scroll.current;
+                this.start = e.touches ? e.touches[0].clientX : e.clientX;
+                this.startTime = Date.now();
+                this.startPos = { x: this.start, y: e.touches ? e.touches[0].clientY : e.clientY };
+            }
+
+            onTouchMove(e) {
+                if (!this.isDown) return;
+                const x = e.touches ? e.touches[0].clientX : e.clientX;
+                const distance = (this.start - x) * (this.scrollSpeed * 0.025);
+                this.scroll.target = (this.scroll.position || 0) + distance;
+            }
+
+            onTouchUp(e) {
+                if (!this.isDown) return;
+                this.isDown = false;
+                const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+                const duration = Date.now() - this.startTime;
+                const dist = Math.sqrt(Math.pow(endX - this.startPos.x, 2) + Math.pow(endY - this.startPos.y, 2));
+
+                if (duration < 250 && dist < 10) { this.onClick(endX, endY); }
+                this.onCheck();
+            }
+
+            onClick(x, y) {
+                const rect = this.gl.canvas.getBoundingClientRect();
+                const mouse = {
+                    x: ((x - rect.left) / rect.width) * 2 - 1,
+                    y: -((y - rect.top) / rect.height) * 2 + 1
+                };
+                // Minimal raycasting for OGL
+                const raycaster = { origin: [this.camera.position.x, this.camera.position.y, this.camera.position.z], direction: [mouse.x, mouse.y, -1] };
+                // Simplification for hit detection based on plane positions
+                let closest = null;
+                let minDist = Infinity;
+
+                this.medias.forEach(m => {
+                    const planePos = m.plane.position;
+                    // Project mouse to world coords at z=0 approx
+                    const worldX = mouse.x * this.viewport.width / 2;
+                    const dist = Math.abs(planePos.x - worldX);
+                    if (dist < m.plane.scale.x / 2 && dist < minDist) {
+                        minDist = dist;
+                        closest = m;
+                    }
+                });
+
+                if (closest) openProjectModal(closest.projectData);
+            }
+
+            onWheel(e) {
+                const delta = e.deltaY || e.detail;
+                this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.5;
+                this.onCheckDebounce();
+            }
+
+            onCheck() {
+                if (!this.medias[0]) return;
+                const width = this.medias[0].width;
+                const itemIndex = Math.round(Math.abs(this.scroll.target) / width);
+                this.scroll.target = (this.scroll.target < 0 ? -1 : 1) * width * itemIndex;
+            }
+
+            onResize() {
+                this.screen = { width: this.container.clientWidth, height: this.container.clientHeight };
+                this.renderer.setSize(this.screen.width, this.screen.height);
+                this.camera.perspective({ aspect: this.screen.width / this.screen.height });
+                const fov = (this.camera.fov * Math.PI) / 180;
+                const height = 2 * Math.tan(fov / 2) * this.camera.position.z;
+                this.viewport = { width: height * this.camera.aspect, height };
+                if (this.medias) this.medias.forEach(m => m.onResize({ screen: this.screen, viewport: this.viewport }));
+            }
+
+            update() {
+                this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
+                const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
+                if (this.medias) this.medias.forEach(m => m.update(this.scroll, direction));
+                this.renderer.render({ scene: this.scene, camera: this.camera });
+                this.scroll.last = this.scroll.current;
+                this.raf = window.requestAnimationFrame(this.update.bind(this));
+            }
+
+            addEventListeners() {
+                window.addEventListener('resize', this.onResize.bind(this));
+                this.gl.canvas.addEventListener('wheel', this.onWheel.bind(this), { passive: true });
+                this.gl.canvas.addEventListener('mousedown', this.onTouchDown.bind(this));
+                window.addEventListener('mousemove', this.onTouchMove.bind(this));
+                window.addEventListener('mouseup', this.onTouchUp.bind(this));
+                this.gl.canvas.addEventListener('touchstart', this.onTouchDown.bind(this), { passive: true });
+                window.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: true });
+                window.addEventListener('touchend', this.onTouchUp.bind(this));
+            }
+
+            destroy() {
+                window.cancelAnimationFrame(this.raf);
+                if (this.gl.canvas.parentNode) this.gl.canvas.parentNode.removeChild(this.gl.canvas);
+            }
+        }
+
+        let galleryInstance = null;
+
+        async function fetchProjects(filter = 'all') {
+            const container = document.getElementById('projectsGallery');
+            if (galleryInstance) galleryInstance.destroy();
+
+            let projectsToShow = FEATURED_PROJECTS;
+            if (filter !== 'all') {
+                projectsToShow = FEATURED_PROJECTS.filter(proj => proj.category && proj.category.toLowerCase().includes(filter.toLowerCase()));
+            }
+
+            galleryInstance = new CircularGalleryApp(container, {
+                items: projectsToShow,
+                bend: 1.5,
+                textColor: '#1a1a1a',
+                borderRadius: 0.04,
+                font: 'bold 36px Figtree',
+                scrollEase: 0.08
+            });
         }
 
         // --- TAB FILTERING LOGIC ---
