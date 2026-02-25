@@ -640,13 +640,15 @@
             height: 100%;
             opacity: 1;
             /* Maximum opacity */
-            /* Stronger top gradient for contrast */
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent 70%);
+            /* Stronger top gradient for contrast - slightly deeper for charcoal rays */
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), transparent 80%);
         }
 
         @media (max-width: 768px) {
             .light-rays-container {
-                opacity: 0.8;
+                opacity: 1;
+                /* Keep at 100% on mobile */
+                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 90%);
             }
         }
 
@@ -1455,20 +1457,6 @@
                 letter-spacing: -0.5px;
             }
 
-            nav {
-                height: auto;
-                padding: 18px 0;
-                padding-top: calc(18px + env(safe-area-inset-top));
-            }
-
-            .hamburger {
-                display: flex;
-                width: 44px;
-                height: 44px;
-                justify-content: center;
-                align-items: center;
-                margin-right: -10px;
-            }
 
 
 
@@ -3366,10 +3354,13 @@
                         
                         float br = (rays1.r * 0.5 + rays2.r * 0.4);
                         float distFromTop = coord.y / iResolution.y;
-                        float brightness = 1.0 - distFromTop;
+                        float brightness = 1.2 - distFromTop; // Boosted brightness
+                        
+                        // Mobile-specific alpha boost (rough detection via resolution)
+                        float alphaMultiplier = iResolution.x < 1500.0 ? 1.5 : 1.0;
                         
                         fragColor.rgb = raysColor;
-                        fragColor.a = br * (0.6 + brightness * 0.4); // Enhanced alpha for visibility
+                        fragColor.a = br * (0.6 + brightness * 0.4) * alphaMultiplier; // Enhanced alpha for visibility
                     }
 
 
