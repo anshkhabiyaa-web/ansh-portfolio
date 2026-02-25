@@ -2441,9 +2441,9 @@
             cardTex.colorSpace = THREE.SRGBColorSpace;
             cardTex.wrapS = THREE.ClampToEdgeWrapping;
             cardTex.wrapT = THREE.ClampToEdgeWrapping;
-            // Zoom into face area: center top crop (like object-fit: cover, object-position: top center)
-            cardTex.repeat.set(0.5, 0.55);
-            cardTex.offset.set(0.25, 0.4);
+            // Show full image (object-fit: contain, object-position: center)
+            cardTex.repeat.set(1.0, 1.0);
+            cardTex.offset.set(0.0, 0.0);
 
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
