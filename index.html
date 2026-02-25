@@ -2475,7 +2475,7 @@
                 if (band) { band.geometry.dispose(); scene.remove(band); }
                 // Connect cord end to the card's clip/hook at top center of card
                 const clipPos = cardGrp.position.clone();
-                clipPos.y += 0.3; // offset to reach the metal clip/hook at the top of the card
+                clipPos.y += -0.7; // offset to reach the metal clip/hook at the top of the card
                 const c = new THREE.CatmullRomCurve3([clipPos, pts[2].clone(), pts[1].clone(), pts[0].clone()], false, 'chordal');
                 band = new THREE.Mesh(new THREE.TubeGeometry(c, 32, 0.06, 8, false), bMat);
                 scene.add(band);
