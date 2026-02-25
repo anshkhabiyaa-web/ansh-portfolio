@@ -612,22 +612,65 @@
         }
 
         /* --- Projects --- */
-        #projects h2 {
-            font-size: 48px;
-            margin-bottom: 60px;
+        /* --- Card Swapping Projects --- */
+        .projects-flex-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 60px;
+            margin-top: 80px;
         }
 
-        /* --- Card Swapping Projects --- */
+        .projects-header {
+            flex: 0 0 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .projects-header h2 {
+            font-size: 64px !important;
+            line-height: 1.1;
+            margin-bottom: 0 !important;
+            text-align: left !important;
+        }
+
+        .projects-intro {
+            font-size: 18px;
+            opacity: 0.7;
+            max-width: 300px;
+        }
+
+        .next-project-btn {
+            align-self: flex-start;
+            padding: 15px 30px;
+            border: 1px solid var(--text-color);
+            background: transparent;
+            color: var(--text-color);
+            border-radius: 100px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .next-project-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
         .card-swap-container {
             position: relative;
-            margin: 80px auto;
-            width: 100%;
+            flex: 1;
             max-width: 500px;
             height: 400px;
             perspective: 1500px;
             /* Allow cards to pop out during animation */
             padding-bottom: 100px;
         }
+
 
         .project-card {
             position: absolute;
@@ -1561,19 +1604,39 @@
             }
 
             /* ===== SELECTED WORK / PROJECTS ===== */
-            #projects h2 {
-                margin-bottom: 25px !important;
+            .projects-flex-wrapper {
+                flex-direction: column;
+                gap: 40px;
+                margin-top: 40px;
             }
 
-            .projects-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
+            .projects-header {
+                flex: none;
+                width: 100%;
+                text-align: center;
+                align-items: center;
+            }
+
+            .projects-header h2 {
+                font-size: 42px !important;
+                text-align: center !important;
+            }
+
+            .projects-intro {
+                max-width: 100%;
+            }
+
+            .card-swap-container {
+                margin: 0 auto;
+                width: 100%;
+                padding-bottom: 80px;
             }
 
             .project-card {
                 width: 100%;
                 gap: 12px;
             }
+
 
             .thumbnail {
                 aspect-ratio: 16/10;
@@ -1924,14 +1987,26 @@
                 </div>
             </section>
 
-            <section id="projects">
+            <section id="projects" style="padding: 100px 0;">
                 <div class="container">
-                    <h2 style="text-align: center;">Selected Work</h2>
-                    <div class="card-swap-container" id="projectsGrid">
-                        <!-- Projects will be stacked here by JavaScript -->
+                    <div class="projects-flex-wrapper">
+                        <div class="projects-header">
+                            <h2>Selected Work</h2>
+                            <p class="projects-intro">
+                                A curated selection of my recent projects, featuring digital marketing campaigns,
+                                leadership roles, and automation builds.
+                            </p>
+                            <button class="next-project-btn" id="nextProjectBtn">
+                                Next Project <span>→</span>
+                            </button>
+                        </div>
+                        <div class="card-swap-container" id="projectsGrid">
+                            <!-- Projects will be stacked here by JavaScript -->
+                        </div>
                     </div>
                 </div>
             </section>
+
 
             </section>
 
@@ -2435,8 +2510,21 @@
                 });
             };
 
-            if (cardSwapInterval) clearInterval(cardSwapInterval);
+            const resetInterval = () => {
+                if (cardSwapInterval) clearInterval(cardSwapInterval);
+                cardSwapInterval = setInterval(swap, 5000);
+            };
+
             cardSwapInterval = setInterval(swap, 5000);
+
+            // Manual Navigation
+            const nextBtn = document.getElementById('nextProjectBtn');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    swap();
+                    resetInterval(); // Restart frequency timer on manual click
+                });
+            }
 
             container.addEventListener('mouseenter', () => {
                 if (cardSwapTimeline) cardSwapTimeline.pause();
@@ -2445,9 +2533,10 @@
 
             container.addEventListener('mouseleave', () => {
                 if (cardSwapTimeline) cardSwapTimeline.play();
-                cardSwapInterval = setInterval(swap, 5000);
+                resetInterval();
             });
         }
+
 
         async function fetchProjects() {
             // We use the FEATURED_PROJECTS as requested, but could merge with Supabase if needed
