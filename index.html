@@ -126,14 +126,19 @@
         /* --- Gooey Navigation (PC Only) --- */
         @media (min-width: 769px) {
             .nav-links-wrapper {
-                display: flex;
-                justify-content: center;
                 position: absolute;
                 left: 50%;
-                transform: translateX(-50%);
+                top: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                pointer-events: none;
+                /* Let container handle clicks */
             }
 
             .gooey-nav-container {
+                pointer-events: auto;
                 --color-1: #555;
                 --color-2: #333;
                 --color-3: #777;
