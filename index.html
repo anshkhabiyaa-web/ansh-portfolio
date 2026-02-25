@@ -233,7 +233,7 @@
 
         .lanyard-canvas-container {
             width: 500px;
-            height: 600px;
+            height: 700px;
             position: relative;
             cursor: grab;
         }
@@ -2441,9 +2441,9 @@
             cardTex.colorSpace = THREE.SRGBColorSpace;
             cardTex.wrapS = THREE.ClampToEdgeWrapping;
             cardTex.wrapT = THREE.ClampToEdgeWrapping;
-            // Zoom into face area: center top crop (like object-position: center top)
-            cardTex.repeat.set(0.4, 0.55);
-            cardTex.offset.set(0.28, 0.35);
+            // Zoom into face area: center top crop (like object-fit: cover, object-position: top center)
+            cardTex.repeat.set(0.55, 0.7);
+            cardTex.offset.set(0.22, 0.25);
 
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
