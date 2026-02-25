@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -17,7 +17,7 @@
     <!-- GSAP for CardSwap Animation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <!-- OGL for Light Rays Effect -->
-
+    <script src="https://cdn.jsdelivr.net/npm/ogl/dist/ogl.umd.js"></script>
 
     <style>
         :root {
@@ -1900,7 +1900,8 @@
 
     <div class="site-content" id="siteContent">
 
-        <nav>
+        <nav style="z-index: 1001;"> <!-- Higher than rays -->
+
             <div class="container">
                 <a href="#" class="logo serif">ANSH KHABIYA</a>
                 <div class="nav-links">
