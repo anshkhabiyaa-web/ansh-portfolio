@@ -668,7 +668,7 @@
 
         .splash-card-name {
             position: absolute;
-            top: 24px;
+            top: 15px;
             left: 0;
             right: 0;
             text-align: center;
@@ -679,6 +679,16 @@
             pointer-events: none;
             text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             transform: translateZ(5px);
+        }
+
+        #splashScreen .pc-avatar-content::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 60%);
+            z-index: 1;
+            pointer-events: none;
+            border-radius: var(--card-radius);
         }
 
         .availability {
