@@ -232,8 +232,8 @@
         }
 
         .lanyard-canvas-container {
-            width: 500px;
-            height: 700px;
+            width: 600px;
+            height: 800px;
             position: relative;
             cursor: grab;
         }
@@ -2442,12 +2442,12 @@
             cardTex.wrapS = THREE.ClampToEdgeWrapping;
             cardTex.wrapT = THREE.ClampToEdgeWrapping;
             // Zoom into face area: center top crop (like object-fit: cover, object-position: top center)
-            cardTex.repeat.set(0.55, 0.7);
-            cardTex.offset.set(0.22, 0.25);
+            cardTex.repeat.set(0.5, 0.55);
+            cardTex.offset.set(0.25, 0.4);
 
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
-                m.scale.set(3.0, 3.0, 3.0);
+                m.scale.set(3.6, 3.6, 3.6);
                 m.position.set(0, -1.6, -0.05);
                 m.traverse((c) => {
                     if (c.isMesh) {
@@ -2466,7 +2466,7 @@
                 cardGrp.add(m);
             }, undefined, () => {
                 cardGrp.add(new THREE.Mesh(
-                    new THREE.BoxGeometry(1.6, 2.25, 0.02),
+                    new THREE.BoxGeometry(2.0, 2.8, 0.02),
                     new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.5, metalness: 0.0 })
                 ));
             });
