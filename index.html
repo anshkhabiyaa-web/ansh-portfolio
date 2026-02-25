@@ -97,12 +97,15 @@
         nav {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
             background: rgba(247, 245, 240, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            z-index: 1000;
+            z-index: 1001;
+            /* Higher than rays */
             height: 80px;
+            padding-top: env(safe-area-inset-top);
             display: flex;
             align-items: center;
         }
@@ -1278,8 +1281,9 @@
 
             /* ===== NAVBAR ===== */
             nav {
-                height: 60px;
-                padding: 0;
+                height: auto;
+                padding: 18px 0;
+                padding-top: calc(18px + env(safe-area-inset-top));
             }
 
             nav .container {
@@ -1311,6 +1315,11 @@
                 padding: 8px;
                 z-index: 2100;
                 -webkit-tap-highlight-color: transparent;
+                width: 44px;
+                height: 44px;
+                justify-content: center;
+                align-items: center;
+                margin-right: -10px;
             }
 
             .hamburger span {
@@ -1335,22 +1344,33 @@
             }
 
             /* ===== MOBILE FULLSCREEN NAV OVERLAY ===== */
+            body.menu-active {
+                overflow: hidden;
+                overscroll-behavior: none;
+            }
+
             .mobile-overlay {
                 position: fixed;
-                inset: 0;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
                 background: var(--bg-color);
                 z-index: 2000;
-                display: none;
+                display: flex;
                 flex-direction: column;
-                align-items: center;
                 justify-content: center;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.4s ease;
+                align-items: center;
+                transform: translateX(100%);
+                transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+                padding: 40px;
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                overscroll-behavior: none;
             }
 
             .mobile-overlay.active {
-                display: flex;
+                transform: translateX(0);
                 opacity: 1;
                 pointer-events: auto;
             }
@@ -1435,8 +1455,19 @@
                 letter-spacing: -0.5px;
             }
 
-            h3 {
-                font-size: 24px !important;
+            nav {
+                height: auto;
+                padding: 18px 0;
+                padding-top: calc(18px + env(safe-area-inset-top));
+            }
+
+            .hamburger {
+                display: flex;
+                width: 44px;
+                height: 44px;
+                justify-content: center;
+                align-items: center;
+                margin-right: -10px;
             }
 
 
@@ -1642,8 +1673,10 @@
             }
 
             .circular-gallery {
-                height: 450px;
+                height: 50dvh;
+                max-height: 450px;
                 border-radius: 16px;
+                margin: 20px 0;
             }
 
             .project-card {
@@ -2110,24 +2143,20 @@
             hamburger.addEventListener('click', () => {
                 hamburger.classList.toggle('active');
                 mobileOverlay.classList.toggle('active');
-                if (mobileOverlay.classList.contains('active')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
+                document.body.classList.toggle('menu-active');
             });
 
             closeOverlay.addEventListener('click', () => {
                 hamburger.classList.remove('active');
                 mobileOverlay.classList.remove('active');
-                document.body.style.overflow = '';
+                document.body.classList.remove('menu-active');
             });
 
             overlayLinks.forEach(link => {
                 link.addEventListener('click', () => {
                     hamburger.classList.remove('active');
                     mobileOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
+                    document.body.classList.remove('menu-active');
                 });
             });
         </script>
@@ -2847,7 +2876,7 @@
                 textColor: '#1a1a1a',
                 borderRadius: 0.04,
                 font: 'bold 36px Figtree',
-                scrollEase: 0.08
+                scrollEase: window.innerWidth < 768 ? 0.12 : 0.08
             });
         }
 
