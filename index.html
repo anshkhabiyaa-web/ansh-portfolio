@@ -1487,15 +1487,22 @@
 
             .hero-right {
                 order: 2;
+                display: flex;
                 justify-content: center;
                 width: 100%;
-                margin-top: 20px;
+                margin-top: 40px;
+                /* More space for the floating card */
             }
 
             .pc-container {
-                transform: scale(0.8);
-                margin: -20px 0;
+                transform: scale(0.75);
+                /* Slightly smaller for mobile */
+                margin: 0 auto;
+                width: 100%;
+                display: flex;
+                justify-content: center;
             }
+
 
             .mobile-avatar {
                 display: none !important;
@@ -1606,31 +1613,44 @@
             /* ===== SELECTED WORK / PROJECTS ===== */
             .projects-flex-wrapper {
                 flex-direction: column;
-                gap: 40px;
+                gap: 50px;
+                /* More gap between text and card */
                 margin-top: 40px;
             }
 
             .projects-header {
                 flex: none;
                 width: 100%;
-                text-align: center;
-                align-items: center;
+                text-align: left;
+                /* Changed from center to left */
+                align-items: flex-start;
+                /* Changed from center to flex-start */
             }
 
             .projects-header h2 {
-                font-size: 42px !important;
-                text-align: center !important;
+                font-size: 38px !important;
+                text-align: left !important;
+                /* Changed from center to left */
             }
 
             .projects-intro {
+                text-align: left;
                 max-width: 100%;
+            }
+
+            .next-project-btn {
+                align-self: flex-start;
+                /* Ensure left-aligned */
             }
 
             .card-swap-container {
                 margin: 0 auto;
                 width: 100%;
                 padding-bottom: 80px;
+                transform: scale(0.9);
+                /* Scale down slightly to fit better */
             }
+
 
             .project-card {
                 width: 100%;
