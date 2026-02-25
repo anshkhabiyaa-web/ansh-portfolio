@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,6 +11,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
+    <!-- Three.js for Lanyard Animation (ES Module importmap) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -220,6 +229,27 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .lanyard-canvas-container {
+            width: 450px;
+            height: 500px;
+            position: relative;
+            cursor: grab;
+        }
+
+        .lanyard-canvas-container:active {
+            cursor: grabbing;
+        }
+
+        .lanyard-canvas-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+
+        .mobile-avatar {
+            display: none;
         }
 
         .stat-badge {
@@ -1131,6 +1161,14 @@
                 width: 100%;
             }
 
+            .lanyard-canvas-container {
+                display: none !important;
+            }
+
+            .mobile-avatar {
+                display: block !important;
+            }
+
             .avatar-container {
                 width: 260px;
                 height: 260px;
@@ -1460,7 +1498,10 @@
                     </div>
                 </div>
                 <div class="hero-right">
-                    <div class="avatar-container">
+                    <!-- 3D Lanyard Animation (desktop) -->
+                    <div class="lanyard-canvas-container" id="lanyardContainer"></div>
+                    <!-- Fallback for mobile -->
+                    <div class="avatar-container mobile-avatar">
                         <img src="profile.jpg" alt="Ansh Chauhan">
                     </div>
                     <div class="stat-badge">
@@ -2338,6 +2379,141 @@
                 });
             });
         });
+    </script>
+
+    <!-- Lanyard 3D Animation (ES Module) -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        (function () {
+            const container = document.getElementById('lanyardContainer');
+            if (!container || window.innerWidth < 768) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(20, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 0, 24);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000000, 0);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+            const dl1 = new THREE.DirectionalLight(0xffffff, 2); dl1.position.set(5, 5, 5); scene.add(dl1);
+            const dl2 = new THREE.DirectionalLight(0xffffff, 1); dl2.position.set(-5, 3, 2); scene.add(dl2);
+            const dl3 = new THREE.DirectionalLight(0xffffff, 0.8); dl3.position.set(0, -2, 8); scene.add(dl3);
+
+            // Rope physics (Verlet)
+            const N = 4, SL = 1.0, G = -40, D = 0.97, dt = 1 / 60;
+            const pts = [], prv = [];
+            for (let i = 0; i < N; i++) { const p = new THREE.Vector3(i * 0.5, 4, 0); pts.push(p.clone()); prv.push(p.clone()); }
+            const anchor = new THREE.Vector3(0, 4, 0);
+            pts[0].copy(anchor); prv[0].copy(anchor);
+
+            let angVel = 0, dragging = false;
+            const dOff = new THREE.Vector3(), mouse = new THREE.Vector2(), ray = new THREE.Raycaster();
+
+            const cardGrp = new THREE.Group();
+            scene.add(cardGrp);
+
+            // Load GLB
+            new GLTFLoader().load('card.glb', (gltf) => {
+                const m = gltf.scene;
+                m.scale.set(2.25, 2.25, 2.25);
+                m.position.set(0, -1.2, -0.05);
+                m.traverse((c) => {
+                    if (c.isMesh) {
+                        if (c.material.name === 'base' || c.name === 'card') {
+                            c.material.roughness = 0.9; c.material.metalness = 0.8;
+                            if (c.material.map) c.material.map.anisotropy = 16;
+                        }
+                        if (c.material.name === 'metal') { c.material.roughness = 0.3; c.material.metalness = 1.0; }
+                        c.material.needsUpdate = true;
+                    }
+                });
+                cardGrp.add(m);
+            }, undefined, () => {
+                cardGrp.add(new THREE.Mesh(
+                    new THREE.BoxGeometry(1.6, 2.25, 0.02),
+                    new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5, metalness: 0.8 })
+                ));
+            });
+
+            // Band
+            let band = null;
+            const bTex = new THREE.TextureLoader().load('lanyard.png');
+            bTex.wrapS = bTex.wrapT = THREE.RepeatWrapping;
+            const bMat = new THREE.MeshStandardMaterial({ map: bTex, side: THREE.DoubleSide, roughness: 0.8, metalness: 0.1 });
+
+            function updBand() {
+                if (band) { band.geometry.dispose(); scene.remove(band); }
+                const c = new THREE.CatmullRomCurve3([pts[N - 1].clone(), pts[2].clone(), pts[1].clone(), pts[0].clone()], false, 'chordal');
+                band = new THREE.Mesh(new THREE.TubeGeometry(c, 32, 0.06, 8, false), bMat);
+                scene.add(band);
+            }
+
+            // Drag target
+            const dBox = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 1), new THREE.MeshBasicMaterial({ visible: false }));
+            scene.add(dBox);
+
+            function ndc(e) { const r = renderer.domElement.getBoundingClientRect(); mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1; mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1; }
+            function wp() { ray.setFromCamera(mouse, camera); const t = new THREE.Vector3(); ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), t); return t; }
+
+            renderer.domElement.addEventListener('pointerdown', (e) => {
+                ndc(e); const w = wp();
+                if (w.distanceTo(cardGrp.position) < 3) { dragging = true; dOff.subVectors(cardGrp.position, w); renderer.domElement.setPointerCapture(e.pointerId); }
+            });
+            renderer.domElement.addEventListener('pointermove', (e) => { if (dragging) ndc(e); });
+            renderer.domElement.addEventListener('pointerup', (e) => { dragging = false; renderer.domElement.releasePointerCapture(e.pointerId); });
+
+            function step() {
+                for (let i = 1; i < N; i++) {
+                    const t = pts[i].clone(), v = pts[i].clone().sub(prv[i]).multiplyScalar(D);
+                    pts[i].add(v); pts[i].y += G * dt * dt; prv[i].copy(t);
+                }
+                if (dragging) { const w = wp(), tg = w.clone().add(dOff); tg.y += 1.45; pts[N - 1].copy(tg); }
+                pts[0].copy(anchor);
+
+                for (let it = 0; it < 10; it++) {
+                    for (let i = 0; i < N - 1; i++) {
+                        const a = pts[i], b = pts[i + 1], d = b.clone().sub(a), l = d.length(), c = (l - SL) / l;
+                        if (i === 0) { b.sub(d.clone().multiplyScalar(c)); }
+                        else { const h = d.clone().multiplyScalar(c * 0.5); a.add(h); b.sub(h); }
+                    }
+                }
+
+                const last = pts[N - 1];
+                cardGrp.position.set(last.x, last.y - 1.45, last.z);
+                const cv = last.clone().sub(prv[N - 1]);
+                angVel += (Math.atan2(cv.x, 1) * 0.3 - cardGrp.rotation.z) * 0.1;
+                angVel *= 0.92;
+                cardGrp.rotation.z += angVel;
+                cardGrp.rotation.y += (-cv.x * 0.5 - cardGrp.rotation.y) * 0.05;
+                dBox.position.copy(cardGrp.position);
+                updBand();
+            }
+
+            let lt = 0;
+            function anim(t) {
+                requestAnimationFrame(anim);
+                const d = Math.min((t - lt) / 1000, 0.05); lt = t;
+                if (d > 0) step();
+                renderer.render(scene, camera);
+            }
+            requestAnimationFrame(anim);
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 768) { container.style.display = 'none'; return; }
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        })();
     </script>
 </body>
 
