@@ -14,6 +14,8 @@
 
     <!-- Supabase SDK (UMD build for global window.supabase) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- GSAP for CardSwap Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         :root {
             --bg-color: #F7F5F0;
@@ -615,17 +617,41 @@
             margin-bottom: 60px;
         }
 
-        .projects-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+        /* --- Card Swapping Projects --- */
+        .card-swap-container {
+            position: relative;
+            margin: 80px auto;
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            perspective: 1500px;
+            /* Allow cards to pop out during animation */
+            padding-bottom: 100px;
         }
 
         .project-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        .project-card:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+        }
+
 
         .thumbnail {
             width: 100%;
@@ -1900,78 +1926,9 @@
 
             <section id="projects">
                 <div class="container">
-                    <h2>Selected Work</h2>
-                    <div class="projects-grid" id="projectsGrid">
-                        <!-- Dynamic Content -->
-                        <div class="project-card" style="cursor: pointer;"
-                            onclick="openProjectModal({title: 'Khabiya Store', image: 'khabiya_store.jpg', tags: 'Family Business, Retail, Digital Marketing', description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'})">
-                            <div class="thumbnail"><img src="khabiya_store.jpg" alt="Khabiya Store"></div>
-                            <div class="project-info">
-                                <div class="project-tags">
-                                    <span class="project-tag">Family Business</span>
-                                    <span class="project-tag">Retail</span>
-                                    <span class="project-tag">Digital Marketing</span>
-                                </div>
-                                <h3>Khabiya Store</h3>
-                                <div class="view-more-btn">Read More →</div>
-                            </div>
-                        </div>
-                        <div class="project-card" style="cursor: pointer;"
-                            onclick="openProjectModal({title: 'Jai Hind Digital Nexus', image: 'nexus_thumbnail.jpg', tags: 'VP Marketing, Event, Sponsorships', description: 'Served as VP of Marketing for Nexus, a 2-day digital led cultural fest at Jai Hind College Mumbai. Brought in sponsorships and partnerships to secure and fund the event and helped establish the committee from ground up.'})">
-                            <div class="thumbnail"><img src="nexus_thumbnail.jpg" alt="Jai Hind Digital Nexus"></div>
-                            <div class="project-info">
-                                <div class="project-tags">
-                                    <span class="project-tag">VP Marketing</span>
-                                    <span class="project-tag">Event</span>
-                                    <span class="project-tag">Sponsorships</span>
-                                </div>
-                                <h3>Jai Hind Digital Nexus</h3>
-                                <div class="view-more-btn">Read More →</div>
-                            </div>
-                        </div>
-                        <div class="project-card" style="cursor: pointer;"
-                            onclick="openProjectModal({title: 'Incubator &amp; Accelerator Centre', image: 'incubator_centre.jpg', tags: 'VP Marketing, Events, Strategy', description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'})">
-                            <div class="thumbnail"><img src="incubator_centre.jpg" alt="Incubator & Accelerator Centre">
-                            </div>
-                            <div class="project-info">
-                                <div class="project-tags">
-                                    <span class="project-tag">VP Marketing</span>
-                                    <span class="project-tag">Events</span>
-                                    <span class="project-tag">Strategy</span>
-                                </div>
-                                <h3>Incubator & Accelerator Centre</h3>
-                                <div class="view-more-btn">Read More →</div>
-                            </div>
-                        </div>
-                        <div class="project-card" style="cursor: pointer;"
-                            onclick="openProjectModal({title: 'AI-Powered Builds & Automation', emoji: '🤖', tags: 'AI, No-Code, Automation, Web', description: 'Built websites and digital tools using AI — including Google AI Studio, Zapier, N8N, Lovable, Antigravity, Cursor, Supabase, WordPress, Pomelio and Gemini'})">
-                            <div class="thumbnail">🤖</div>
-                            <div class="project-info">
-                                <div class="project-tags">
-                                    <span class="project-tag">AI</span>
-                                    <span class="project-tag">No-Code</span>
-                                    <span class="project-tag">Automation</span>
-                                    <span class="project-tag">Web</span>
-                                </div>
-                                <h3>AI-Powered Builds & Automation</h3>
-                                <div class="view-more-btn">Read More →</div>
-                            </div>
-                        </div>
-                        <div class="project-card" style="cursor: pointer;"
-                            onclick="openProjectModal({title: 'Event Committees, Jai Hind College', image: 'jaihind_events.jpg', tags: 'Organising Committee, Events, College', description: '• Handled External Public Relations and networking for Family Business Hub\n• Managed Brand Relations and stakeholder networking for Jai Hind Business Conclave\n• Led Marketing for Talaash, the college cultural fest'})">
-                            <div class="thumbnail"><img src="jaihind_events.jpg"
-                                    alt="Event Committees, Jai Hind College">
-                            </div>
-                            <div class="project-info">
-                                <div class="project-tags">
-                                    <span class="project-tag">Organising Committee</span>
-                                    <span class="project-tag">Events</span>
-                                    <span class="project-tag">College</span>
-                                </div>
-                                <h3>Event Committees, Jai Hind College</h3>
-                                <div class="view-more-btn">Read More →</div>
-                            </div>
-                        </div>
+                    <h2 style="text-align: center;">Selected Work</h2>
+                    <div class="card-swap-container" id="projectsGrid">
+                        <!-- Projects will be stacked here by JavaScript -->
                     </div>
                 </div>
             </section>
@@ -2349,38 +2306,182 @@
             }
         }
 
-        async function fetchProjects() {
-            if (!supabaseInstance) return;
-            const { data, error } = await supabaseInstance.from('projects').select('*').order('created_at', { ascending: false });
-            if (data && data.length > 0) {
-                const grid = document.getElementById('projectsGrid');
-                grid.innerHTML = '';
-                data.forEach(proj => {
-                    // Ultimate override removed - now using khabiya_store.jpg
-                    const pTitle = (proj.title || "").toLowerCase();
-                    const pDesc = (proj.description || "").toLowerCase();
-                    if (pTitle.includes('khabiya') || pDesc.includes('khabiya') || pDesc.includes('ratlam')) {
-                        if (!proj.image) {
-                            proj.image = 'khabiya_store.jpg';
-                        }
-                    }
-                    const card = document.createElement('div');
-                    card.className = 'project-card';
-                    card.style.cursor = 'pointer';
-                    card.innerHTML = `
-                        <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : (proj.emoji || '🚀')}</div>
-                        <div class="project-info">
-                            <div class="project-tags">
-                                ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
-                            </div>
-                            <h3>${proj.title}</h3>
-                            <div class="view-more-btn">Read More →</div>
-                        </div>
-                    `;
-                    card.addEventListener('click', () => openProjectModal(proj));
-                    grid.appendChild(card);
-                });
+        const FEATURED_PROJECTS = [
+            {
+                title: 'Khabiya Store',
+                image: 'khabiya_store.jpg',
+                tags: 'Family Business, Retail, Digital Marketing',
+                description: 'Managed operations and digital marketing for family retail business in Ratlam. Grew customer footfall by 1000 through digital campaigns and handled daily sales operations and employee management.'
+            },
+            {
+                title: 'Jai Hind Digital Nexus',
+                image: 'nexus_thumbnail.jpg',
+                tags: 'VP Marketing, Event, Sponsorships',
+                description: 'Served as VP of Marketing for Nexus, a 2-day digital led cultural fest at Jai Hind College Mumbai. Brought in sponsorships and partnerships to secure and fund the event and helped establish the committee from ground up.'
+            },
+            {
+                title: 'Incubator & Accelerator Centre',
+                image: 'incubator_centre.jpg',
+                tags: 'VP Marketing, Events, Strategy',
+                description: 'As VP of Marketing, secured sponsorship for Internship Fair, Startup Expo at Jai Hind College Mumbai.'
+            },
+            {
+                title: 'AI-Powered Builds & Automation',
+                emoji: '🤖',
+                tags: 'AI, No-Code, Automation, Web',
+                description: 'Built websites and digital tools using AI — including Google AI Studio, Zapier, N8N, Lovable, Antigravity, Cursor, Supabase, WordPress, Pomelio and Gemini'
+            },
+            {
+                title: 'Event Committees, Jai Hind College',
+                image: 'jaihind_events.jpg',
+                tags: 'Organising Committee, Events, College',
+                description: '• Handled External Public Relations and networking for Family Business Hub\n• Managed Brand Relations and stakeholder networking for Jai Hind Business Conclave\n• Led Marketing for Talaash, the college cultural fest'
             }
+        ];
+
+        let cardSwapInterval;
+        let cardSwapTimeline;
+        let cardOrder = [];
+        let cardRefs = [];
+
+        function initCardSwap() {
+            const container = document.getElementById('projectsGrid');
+            const cards = container.querySelectorAll('.project-card');
+            if (cards.length < 2) return;
+
+            cardRefs = Array.from(cards);
+            cardOrder = cardRefs.map((_, i) => i);
+
+            // Distance settings from ReactBits
+            const cardDistance = window.innerWidth < 768 ? 30 : 60;
+            const verticalDistance = window.innerWidth < 768 ? 40 : 70;
+            const skewAmount = 6;
+            const total = cardRefs.length;
+
+            const makeSlot = (i, distX, distY, total) => ({
+                x: i * distX,
+                y: -i * distY,
+                z: -i * distX * 1.5,
+                zIndex: total - i
+            });
+
+            const placeNow = (el, slot, skew) =>
+                gsap.set(el, {
+                    x: slot.x,
+                    y: slot.y,
+                    z: slot.z,
+                    xPercent: -50,
+                    yPercent: -50,
+                    skewY: skew,
+                    transformOrigin: 'center center',
+                    zIndex: slot.zIndex,
+                    force3D: true
+                });
+
+            cardRefs.forEach((el, i) => placeNow(el, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
+
+            const config = {
+                ease: 'elastic.out(0.6,0.9)',
+                durDrop: 2,
+                durMove: 2,
+                durReturn: 2,
+                promoteOverlap: 0.9,
+                returnDelay: 0.05
+            };
+
+            const swap = () => {
+                if (cardOrder.length < 2) return;
+
+                const [front, ...rest] = cardOrder;
+                const elFront = cardRefs[front];
+                const tl = gsap.timeline();
+                cardSwapTimeline = tl;
+
+                tl.to(elFront, {
+                    y: '+=500',
+                    duration: config.durDrop,
+                    ease: config.ease
+                });
+
+                tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
+                rest.forEach((idx, i) => {
+                    const el = cardRefs[idx];
+                    const slot = makeSlot(i, cardDistance, verticalDistance, total);
+                    tl.set(el, { zIndex: slot.zIndex }, 'promote');
+                    tl.to(el, {
+                        x: slot.x,
+                        y: slot.y,
+                        z: slot.z,
+                        duration: config.durMove,
+                        ease: config.ease
+                    }, `promote+=${i * 0.15}`);
+                });
+
+                const backSlot = makeSlot(total - 1, cardDistance, verticalDistance, total);
+                tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
+                tl.call(() => {
+                    gsap.set(elFront, { zIndex: backSlot.zIndex });
+                }, null, 'return');
+                tl.to(elFront, {
+                    x: backSlot.x,
+                    y: backSlot.y,
+                    z: backSlot.z,
+                    duration: config.durReturn,
+                    ease: config.ease
+                }, 'return');
+
+                tl.call(() => {
+                    cardOrder = [...rest, front];
+                });
+            };
+
+            if (cardSwapInterval) clearInterval(cardSwapInterval);
+            cardSwapInterval = setInterval(swap, 5000);
+
+            container.addEventListener('mouseenter', () => {
+                if (cardSwapTimeline) cardSwapTimeline.pause();
+                clearInterval(cardSwapInterval);
+            });
+
+            container.addEventListener('mouseleave', () => {
+                if (cardSwapTimeline) cardSwapTimeline.play();
+                cardSwapInterval = setInterval(swap, 5000);
+            });
+        }
+
+        async function fetchProjects() {
+            // We use the FEATURED_PROJECTS as requested, but could merge with Supabase if needed
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+
+            let projectsToShow = FEATURED_PROJECTS;
+
+            if (supabaseInstance) {
+                const { data, error } = await supabaseInstance.from('projects').select('*').order('created_at', { ascending: false });
+                if (data && data.length > 0) {
+                    // Combine or replace? User specifically asked for these 5. 
+                    // Let's stick to these 5 as requested for the animation.
+                }
+            }
+
+            projectsToShow.forEach(proj => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <div class="thumbnail">${proj.image ? `<img src="${proj.image}" alt="${proj.title}">` : (proj.emoji || '🚀')}</div>
+                    <div class="project-info" style="padding: 20px;">
+                        <div class="project-tags">
+                            ${proj.tags ? proj.tags.split(',').map(tag => `<span class="project-tag">${tag.trim()}</span>`).join('') : ''}
+                        </div>
+                        <h3 style="margin-top: 10px;">${proj.title}</h3>
+                        <div class="view-more-btn" style="margin-top: auto;">Read More →</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => openProjectModal(proj));
+                grid.appendChild(card);
+            });
+
+            initCardSwap();
         }
 
         function openProjectModal(proj) {
