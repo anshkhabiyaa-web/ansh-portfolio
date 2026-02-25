@@ -2441,8 +2441,8 @@
             cardTex.colorSpace = THREE.SRGBColorSpace;
             cardTex.wrapS = THREE.ClampToEdgeWrapping;
             cardTex.wrapT = THREE.ClampToEdgeWrapping;
-            // Show full image (object-fit: contain, object-position: center)
-            cardTex.repeat.set(1.0, 1.0);
+            // Show image anchored left (object-position: left center)
+            cardTex.repeat.set(0.85, 1.0);
             cardTex.offset.set(0.0, 0.0);
 
             new GLTFLoader().load('card.glb', (gltf) => {
