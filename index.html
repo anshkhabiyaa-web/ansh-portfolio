@@ -2422,6 +2422,11 @@
             scene.add(cardGrp);
 
             // Load GLB
+            // Load user photo for card texture
+            const cardTex = new THREE.TextureLoader().load('ansh_card.jpg');
+            cardTex.flipY = false;
+            cardTex.colorSpace = THREE.SRGBColorSpace;
+
             new GLTFLoader().load('card.glb', (gltf) => {
                 const m = gltf.scene;
                 m.scale.set(2.25, 2.25, 2.25);
@@ -2429,8 +2434,9 @@
                 m.traverse((c) => {
                     if (c.isMesh) {
                         if (c.material.name === 'base' || c.name === 'card') {
+                            c.material.map = cardTex;
                             c.material.roughness = 0.9; c.material.metalness = 0.8;
-                            if (c.material.map) c.material.map.anisotropy = 16;
+                            c.material.map.anisotropy = 16;
                         }
                         if (c.material.name === 'metal') { c.material.roughness = 0.3; c.material.metalness = 1.0; }
                         c.material.needsUpdate = true;
@@ -2440,7 +2446,7 @@
             }, undefined, () => {
                 cardGrp.add(new THREE.Mesh(
                     new THREE.BoxGeometry(1.6, 2.25, 0.02),
-                    new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.5, metalness: 0.8 })
+                    new THREE.MeshStandardMaterial({ map: cardTex, roughness: 0.5, metalness: 0.8 })
                 ));
             });
 
