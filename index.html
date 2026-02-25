@@ -38,6 +38,9 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+            /* Fix for mobile browser highlights */
         }
 
         html {
@@ -1453,10 +1456,15 @@
             }
 
             h2 {
-                font-size: 28px !important;
-                margin-bottom: 20px !important;
+                font-size: 32px !important;
+                margin-bottom: 24px !important;
                 text-align: left !important;
                 line-height: 1.2;
+                letter-spacing: -0.5px;
+            }
+
+            h3 {
+                font-size: 24px !important;
             }
 
 
@@ -1481,14 +1489,21 @@
             }
 
             #hero h1 {
-                font-size: 32px;
-                line-height: 1.15;
-                margin-bottom: 16px;
+                font-size: 36px;
+                /* Slightly larger for impact */
+                line-height: 1.1;
+                margin-bottom: 20px;
                 word-wrap: break-word;
                 overflow-wrap: break-word;
             }
 
-            @media (max-width: 375px) {
+            @media (max-width: 400px) {
+                #hero h1 {
+                    font-size: 32px;
+                }
+            }
+
+            @media (max-width: 350px) {
                 #hero h1 {
                     font-size: 28px;
                 }
@@ -1531,12 +1546,14 @@
             }
 
             .pc-container {
-                transform: scale(0.75);
-                /* Slightly smaller for mobile */
+                transform: scale(0.8);
                 margin: 0 auto;
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.1));
+                padding: 20px 0;
+                /* Tighter padding */
             }
 
 
@@ -1649,9 +1666,9 @@
             /* ===== SELECTED WORK / PROJECTS ===== */
             .projects-flex-wrapper {
                 flex-direction: column;
-                gap: 50px;
-                /* More gap between text and card */
-                margin-top: 40px;
+                gap: 40px;
+                /* Reduced gap */
+                margin-top: 30px;
             }
 
             .projects-header {
@@ -1682,9 +1699,12 @@
             .card-swap-container {
                 margin: 0 auto;
                 width: 100%;
-                padding-bottom: 30px;
-                transform: scale(0.9);
-                /* Scale down slightly to fit better */
+                max-width: 100%;
+                padding-bottom: 20px;
+                transform: scale(0.92);
+                /* Slightly larger for visibility */
+                margin-top: -20px;
+                /* Pull up closer to title */
             }
 
 
@@ -1806,8 +1826,11 @@
                 padding: 30px 20px !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                max-height: 85vh;
-                border-radius: 8px;
+                max-height: 90vh;
+                /* More height on mobile */
+                border-radius: 16px;
+                /* Match design */
+                -webkit-overflow-scrolling: touch;
             }
 
             .close-project-modal {
