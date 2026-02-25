@@ -42,17 +42,6 @@
             font-family: 'DM Sans', sans-serif;
             line-height: 1.6;
             overflow-x: clip;
-            animation: fadeInBody 0.3s ease-out forwards;
-        }
-
-        @keyframes fadeInBody {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
         }
 
         h1,
@@ -320,13 +309,18 @@
             z-index: 1;
         }
 
-        .pc-card * {
+        .pc-card .pc-inside,
+        .pc-card .pc-shine,
+        .pc-card .pc-glare,
+        .pc-card .pc-content {
             display: grid;
             grid-area: 1/-1;
             border-radius: var(--card-radius);
             pointer-events: none;
             width: 100%;
             height: 100%;
+            position: absolute;
+            inset: 0;
         }
 
         .pc-inside {
@@ -668,35 +662,26 @@
 
 
 
-        .splash-card-name {
-            position: absolute;
-            top: 15px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: #fff;
-            font-size: 24px;
-            letter-spacing: 1px;
-            z-index: 10;
-            pointer-events: none;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            transform: translateZ(5px);
-        }
-
 
 
         .availability {
             position: absolute;
-            bottom: 40px;
-            left: 10px;
-            background: #000;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
             color: white;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 100px;
-            font-size: 13px;
+            font-size: 11px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            z-index: 10;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateZ(10px);
+            white-space: nowrap;
         }
 
         .dot {
@@ -1442,6 +1427,19 @@
                 height: 2px;
                 background: var(--text-color);
                 transition: var(--transition);
+                transform-origin: center;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg);
             }
 
             /* ===== MOBILE FULLSCREEN NAV OVERLAY ===== */
@@ -1505,11 +1503,48 @@
                 padding: 50px 0;
             }
 
-            h2 {
-                font-size: 30px !important;
-                margin-bottom: 25px !important;
-                text-align: left !important;
+            .project-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
             }
+
+            .admin-mobile-nav {
+                display: flex;
+                overflow-x: auto;
+                background: white;
+                border-bottom: 1px solid #eee;
+                padding: 5px 15px;
+                gap: 20px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .admin-mobile-nav::-webkit-scrollbar {
+                display: none;
+            }
+
+            .admin-mobile-nav .admin-nav-item {
+                font-size: 13px;
+                padding: 10px 0;
+                color: #666;
+                white-space: nowrap;
+                border-bottom: 2px solid transparent;
+            }
+
+            .admin-mobile-nav .admin-nav-item.active {
+                color: var(--text-color);
+                border-bottom-color: var(--text-color);
+                font-weight: 600;
+            }
+
+            h2 {
+                font-size: 28px !important;
+                margin-bottom: 20px !important;
+                text-align: left !important;
+                line-height: 1.2;
+            }
+
+
 
             /* ===== HERO ===== */
             #hero {
@@ -1600,15 +1635,18 @@
             }
 
             .availability {
-                position: relative !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                margin: 10px auto 0 !important;
-                width: max-content;
-                justify-content: center;
-                background: rgba(0, 0, 0, 0.05);
-                color: var(--text-color);
-                border: 1px solid var(--border-color);
+                position: absolute !important;
+                bottom: 15px !important;
+                left: 15px !important;
+                padding: 4px 10px !important;
+                font-size: 10px !important;
+                background: rgba(0, 0, 0, 0.85) !important;
+                width: fit-content !important;
+                height: auto !important;
+                margin: 0 !important;
+                display: flex !important;
+                transform: translateZ(15px) !important;
+                z-index: 100 !important;
             }
 
             /* ===== ABOUT / PHILOSOPHY ===== */
@@ -1754,16 +1792,21 @@
                 width: 100%;
                 font-size: 16px;
                 /* 16px prevents iOS zoom on focus */
-                padding: 12px 0;
+                padding: 14px 16px;
                 box-sizing: border-box;
+                border: 1px solid var(--border-color);
+                background: rgba(0, 0, 0, 0.02);
+                border-radius: 4px;
             }
 
             .submit-btn {
                 width: 100%;
                 text-align: center;
-                padding: 16px;
-                font-size: 14px;
+                padding: 18px;
+                font-size: 15px;
+                font-weight: 600;
                 box-sizing: border-box;
+                border-radius: 4px;
             }
 
             .contact-info-col {
@@ -1791,8 +1834,14 @@
 
             /* ===== FOOTER ===== */
             footer {
-                padding: 30px 0;
+                padding: 40px 0;
                 font-size: 12px;
+                text-align: center;
+            }
+
+            footer .container {
+                display: flex;
+                justify-content: center;
             }
 
             /* ===== PROJECT MODAL ===== */
@@ -1889,348 +1938,13 @@
             }
         }
 
-        /* --- Splash Screen --- */
-        #splashScreen {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #080808;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 12vh;
-            cursor: default;
-            overflow: hidden;
-        }
-
-        /* Subtle grain texture on splash background */
-        #splashScreen::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 256px 256px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        #splashScreen .splash-card-container {
-            position: relative;
-            animation: paperFall 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-            cursor: pointer;
-        }
-
-        /* Pulsing hint for clickability */
-        #splashScreen .splash-card-container::before {
-            content: '';
-            position: absolute;
-            inset: -15px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: calc(var(--card-radius) + 10px);
-            z-index: -1;
-            opacity: 0;
-            animation: cardPulse 2s ease-in-out infinite 2.2s;
-            filter: blur(15px);
-        }
-
-        @keyframes cardPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-        }
-
-        /* Ground shadow under the card */
-        #splashScreen .splash-card-container::after {
-            content: '';
-            position: absolute;
-            bottom: -35px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0.2);
-            width: 70%;
-            height: 25px;
-            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(10px);
-            animation: groundShadow 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-
-        /* Paper texture on the card */
-        #splashScreen .pc-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: var(--card-radius);
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.06'/%3E%3C/svg%3E");
-            background-repeat: repeat;
-            background-size: 512px 512px;
-            pointer-events: none;
-            z-index: 10;
-            mix-blend-mode: overlay;
-        }
-
-        /* Realistic paper shadow */
-        #splashScreen .pc-card {
-            box-shadow:
-                rgba(0, 0, 0, 0.7) calc((var(--pointer-from-left) * 8px) - 3px) calc((var(--pointer-from-top) * 16px) - 4px) 18px -5px,
-                0 10px 40px rgba(0, 0, 0, 0.45),
-                0 3px 10px rgba(0, 0, 0, 0.3),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.04);
-        }
-
-        /* --- Paper Fall: natural descent with air-resistance sway --- */
-        @keyframes paperFall {
-            0% {
-                opacity: 0;
-                transform: translateY(-110vh) rotate(-8deg);
-            }
-
-            15% {
-                opacity: 1;
-                transform: translateY(-70vh) rotate(5deg);
-            }
-
-            35% {
-                transform: translateY(-35vh) rotate(-3deg);
-            }
-
-            55% {
-                transform: translateY(-10vh) rotate(1.5deg);
-            }
-
-            72% {
-                transform: translateY(6px) rotate(-0.8deg);
-            }
-
-            84% {
-                transform: translateY(-3px) rotate(0.3deg);
-            }
-
-            92% {
-                transform: translateY(1px) rotate(-0.1deg);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) rotate(0deg);
-            }
-        }
-
-        @keyframes groundShadow {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) scaleX(0.2);
-            }
-
-            60% {
-                opacity: 0.3;
-                transform: translateX(-50%) scaleX(0.6);
-            }
-
-            75% {
-                opacity: 0.7;
-                transform: translateX(-50%) scaleX(1.06);
-            }
-
-            100% {
-                opacity: 0.5;
-                transform: translateX(-50%) scaleX(1);
-            }
-        }
-
-        /* --- Unfold Exit: card opens downward from top hinge --- */
-        #splashScreen.unfold .splash-card-container {
-            transform-origin: top center;
-            animation: cardUnfoldDown 1.2s cubic-bezier(0.4, 0, 0.15, 1) forwards;
-        }
-
-        #splashScreen.unfold .splash-card-container::after {
-            animation: shadowVanish 0.5s ease forwards;
-        }
-
-        #splashScreen.unfold {
-            animation: bgReveal 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        @keyframes cardUnfoldDown {
-            0% {
-                transform: perspective(1000px) rotateX(0deg) scale(1);
-                opacity: 1;
-            }
-
-            20% {
-                transform: perspective(1000px) rotateX(0deg) scale(1.02) translateY(-8px);
-                opacity: 1;
-            }
-
-            50% {
-                transform: perspective(1000px) rotateX(40deg) scale(1.06) translateY(-20px);
-                opacity: 0.9;
-            }
-
-            100% {
-                transform: perspective(1000px) rotateX(110deg) scale(1.15) translateY(-50px);
-                opacity: 0;
-            }
-        }
-
-        @keyframes shadowVanish {
-            to {
-                opacity: 0;
-                transform: translateX(-50%) scaleX(0.2);
-                filter: blur(20px);
-            }
-        }
-
-        @keyframes bgReveal {
-
-            0%,
-            50% {
-                background: #080808;
-            }
-
-            100% {
-                background: transparent;
-                pointer-events: none;
-            }
-        }
-
-        #splashScreen .splash-hint {
-            position: absolute;
-            bottom: 30px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: 'DM Sans', sans-serif;
-            animation: hintFadeIn 0.8s ease 2s both, hintPulse 2.5s ease-in-out 2.8s infinite;
-            z-index: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        #splashScreen.unfold .splash-hint {
-            opacity: 0;
-        }
-
-        @keyframes hintFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes hintPulse {
-
-            0%,
-            100% {
-                opacity: 0.25;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
         .site-content {
-            opacity: 0;
-            transition: opacity 0.8s ease-out;
-        }
-
-        .site-content.visible {
             opacity: 1;
-        }
-
-        .site-content.no-splash {
-            opacity: 1;
-            transition: none;
-        }
-
-        @media (max-width: 768px) {
-            #splashScreen {
-                padding-bottom: 8vh;
-            }
-
-            #splashScreen .splash-card-container {
-                transform: scale(0.75);
-                transform-origin: center;
-            }
-
-            @keyframes paperFall {
-                0% {
-                    opacity: 0;
-                    transform: translateY(-100vh) rotate(-5deg) scale(0.75);
-                }
-
-                100% {
-                    opacity: 1;
-                    transform: translateY(0) rotate(0deg) scale(0.75);
-                }
-            }
-
-            @keyframes groundShadow {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-50%) scaleX(0.2);
-                }
-
-                100% {
-                    opacity: 0.4;
-                    transform: translateX(-50%) scaleX(0.85);
-                }
-            }
-
-            @keyframes cardUnfoldDown {
-                0% {
-                    transform: perspective(1000px) rotateX(0deg) scale(0.75);
-                    opacity: 1;
-                }
-
-                100% {
-                    transform: perspective(1000px) rotateX(100deg) scale(0.9) translateY(-30px);
-                    opacity: 0;
-                }
-            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Splash Screen -->
-    <div id="splashScreen">
-        <div class="splash-card-container" id="splashCardContainer">
-            <div class="pc-card-wrapper" id="splashCardWrapper">
-                <div class="pc-behind"></div>
-                <div class="pc-card-shell" id="splashCardShell">
-                    <section class="pc-card">
-                        <div class="pc-inside">
-                            <div class="splash-card-name serif">Ansh Khabiya</div>
-                            <div class="pc-shine"></div>
-                            <div class="pc-glare"></div>
-                            <div class="pc-content pc-avatar-content">
-                                <img class="avatar" src="ansh.jpg" alt="Ansh Khabiya avatar" loading="eager">
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </div>
-        <div class="splash-hint">Click to enter</div>
-    </div>
 
     <div class="site-content" id="siteContent">
 
@@ -2283,10 +1997,11 @@
                             <div class="pc-behind"></div>
                             <div class="pc-card-shell" id="profileCardShell">
                                 <section class="pc-card">
+                                    <div class="availability">
+                                        <span class="dot"></span>
+                                        Available for work
+                                    </div>
                                     <div class="pc-inside">
-                                        <div class="pc-contact-pill"
-                                            onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'}); return false;">
-                                            Contact</div>
                                         <div class="pc-shine"></div>
                                         <div class="pc-glare"></div>
                                         <div class="pc-content pc-avatar-content">
@@ -2295,15 +2010,6 @@
                                     </div>
                                 </section>
                             </div>
-                        </div>
-                        <!-- Fallback for mobile -->
-                        <div class="avatar-container mobile-avatar">
-                            <img src="profile.jpg" alt="Ansh Chauhan">
-                        </div>
-
-                        <div class="availability">
-                            <div class="dot"></div>
-                            Available for work
                         </div>
                     </div>
                 </div>
@@ -2541,17 +2247,24 @@
             const overlayLinks = document.querySelectorAll('.mobile-nav-links a');
 
             hamburger.addEventListener('click', () => {
-                mobileOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                hamburger.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                if (mobileOverlay.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
             });
 
             closeOverlay.addEventListener('click', () => {
+                hamburger.classList.remove('active');
                 mobileOverlay.classList.remove('active');
                 document.body.style.overflow = '';
             });
 
             overlayLinks.forEach(link => {
                 link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
                     mobileOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 });
@@ -2636,6 +2349,13 @@
                     <button class="exit-btn" id="exitAdmin">Exit Admin</button>
                     <button class="logout-btn" id="logoutBtn">Logout</button>
                 </header>
+
+                <nav class="admin-mobile-nav">
+                    <div class="admin-nav-item active" data-tab="dashboard">Dashboard</div>
+                    <div class="admin-nav-item" data-tab="profile">Profile</div>
+                    <div class="admin-nav-item" data-tab="projects-tab">Projects</div>
+                    <div class="admin-nav-item" data-tab="settings">Settings</div>
+                </nav>
 
                 <div class="admin-content">
                     <!-- Dashboard -->
@@ -3072,11 +2792,18 @@
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 const tabId = item.getAttribute('data-tab');
+                if (!tabId) return;
 
-                navItems.forEach(nav => nav.classList.remove('active'));
+                // Update all nav items (both sidebar and mobile)
+                navItems.forEach(nav => {
+                    if (nav.getAttribute('data-tab') === tabId) {
+                        nav.classList.add('active');
+                    } else {
+                        nav.classList.remove('active');
+                    }
+                });
+
                 tabContents.forEach(content => content.classList.remove('active'));
-
-                item.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
             });
         });
@@ -3311,13 +3038,9 @@
                 }, 500);
             });
 
-            // Initial animation: start from top-right corner and ease to center
-            var initialX = (shell.clientWidth || 300) - INITIAL_X_OFFSET;
-            var initialY = INITIAL_Y_OFFSET;
-            currentX = initialX;
-            currentY = initialY;
+            currentX = shell.clientWidth / 2;
+            currentY = shell.clientHeight / 2;
             setVarsFromXY(currentX, currentY);
-            initialUntil = performance.now() + INITIAL_DURATION;
             toCenter();
             start();
         })();
@@ -3325,108 +3048,7 @@
 
     </div><!-- /site-content -->
 
-    <!-- Splash Screen Logic -->
-    <script>
-        (function () {
-            var splash = document.getElementById('splashScreen');
-            var siteContent = document.getElementById('siteContent');
-            if (!splash || !siteContent) return;
 
-
-            // Tilt engine for the splash card
-            var sWrap = document.getElementById('splashCardWrapper');
-            var sShell = document.getElementById('splashCardShell');
-            if (sWrap && sShell) {
-                var sRunning = false, sRafId = null, sLastTs = 0;
-                var sCurX = 0, sCurY = 0, sTarX = 0, sTarY = 0;
-                var sTau = 0.14, sInitUntil = 0, sInitTau = 0.6;
-                var sEnterTimer = null, sLeaveRaf = null;
-
-                function sClamp(v, mn, mx) { return Math.min(Math.max(v, mn === undefined ? 0 : mn), mx === undefined ? 100 : mx); }
-                function sRound(v, p) { p = p || 3; return parseFloat(v.toFixed(p)); }
-                function sAdjust(v, fMin, fMax, tMin, tMax) { return sRound(tMin + ((tMax - tMin) * (v - fMin)) / (fMax - fMin)); }
-
-                function sSetVars(x, y) {
-                    var w = sShell.clientWidth || 1, h = sShell.clientHeight || 1;
-                    var px = sClamp((100 / w) * x), py = sClamp((100 / h) * y);
-                    var cx = px - 50, cy = py - 50;
-                    sWrap.style.setProperty('--pointer-x', px + '%');
-                    sWrap.style.setProperty('--pointer-y', py + '%');
-                    sWrap.style.setProperty('--background-x', sAdjust(px, 0, 100, 35, 65) + '%');
-                    sWrap.style.setProperty('--background-y', sAdjust(py, 0, 100, 35, 65) + '%');
-                    sWrap.style.setProperty('--pointer-from-center', '' + sClamp(Math.hypot(py - 50, px - 50) / 50, 0, 1));
-                    sWrap.style.setProperty('--pointer-from-top', '' + (py / 100));
-                    sWrap.style.setProperty('--pointer-from-left', '' + (px / 100));
-                    sWrap.style.setProperty('--rotate-x', sRound(-(cx / 5)) + 'deg');
-                    sWrap.style.setProperty('--rotate-y', sRound(cy / 4) + 'deg');
-                }
-
-                function sStep(ts) {
-                    if (!sRunning) return;
-                    if (sLastTs === 0) sLastTs = ts;
-                    var dt = (ts - sLastTs) / 1000; sLastTs = ts;
-                    var tau = ts < sInitUntil ? sInitTau : sTau;
-                    var k = 1 - Math.exp(-dt / tau);
-                    sCurX += (sTarX - sCurX) * k;
-                    sCurY += (sTarY - sCurY) * k;
-                    sSetVars(sCurX, sCurY);
-                    if (Math.abs(sTarX - sCurX) > 0.05 || Math.abs(sTarY - sCurY) > 0.05 || document.hasFocus()) {
-                        sRafId = requestAnimationFrame(sStep);
-                    } else {
-                        sRunning = false; sLastTs = 0;
-                    }
-                }
-                function sStart() { if (sRunning) return; sRunning = true; sLastTs = 0; sRafId = requestAnimationFrame(sStep); }
-                function sSetTarget(x, y) { sTarX = x; sTarY = y; sStart(); }
-                function sToCenter() { sSetTarget(sShell.clientWidth / 2, sShell.clientHeight / 2); }
-
-                // Listen for pointer movement on the splash screen itself
-                splash.addEventListener('pointermove', function (e) {
-                    if (e.pointerType === 'touch') return;
-                    var rect = sShell.getBoundingClientRect();
-                    sSetTarget(e.clientX - rect.left, e.clientY - rect.top);
-                });
-
-                splash.addEventListener('touchmove', function (e) {
-                    var rect = sShell.getBoundingClientRect();
-                    var touch = e.touches[0];
-                    sSetTarget(touch.clientX - rect.left, touch.clientY - rect.top);
-                }, { passive: true });
-
-                splash.addEventListener('pointerleave', function () { sToCenter(); });
-                splash.addEventListener('touchend', function () { sToCenter(); });
-
-                // Initial animation
-                var ix = (sShell.clientWidth || 300) - 70;
-                sCurX = ix; sCurY = 60;
-                sSetVars(sCurX, sCurY);
-                sInitUntil = performance.now() + 1200;
-                sToCenter();
-                sStart();
-            }
-
-            // Dismiss splash on click — unfold downward from top hinge
-            var cardContainer = document.getElementById('splashCardContainer');
-            if (cardContainer) {
-                cardContainer.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    if (splash.classList.contains('unfold')) return;
-                    splash.classList.add('unfold');
-
-                    // Fade in site content as card unfolds away
-                    setTimeout(function () {
-                        siteContent.classList.add('visible');
-                    }, 700);
-
-                    // Remove splash after all animations complete
-                    setTimeout(function () {
-                        splash.style.display = 'none';
-                        if (sRafId) cancelAnimationFrame(sRafId);
-                    }, 1500);
-                });
-            }
-        })();
-    </script>
 </body>
 
 </html>
