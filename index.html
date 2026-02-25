@@ -1849,7 +1849,7 @@
             align-items: center;
             justify-content: flex-end;
             padding-bottom: 12vh;
-            cursor: pointer;
+            cursor: default;
             overflow: hidden;
         }
 
@@ -1866,9 +1866,36 @@
         }
 
         #splashScreen .splash-card-container {
-            pointer-events: none;
             position: relative;
             animation: paperFall 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            cursor: pointer;
+        }
+
+        /* Pulsing hint for clickability */
+        #splashScreen .splash-card-container::before {
+            content: '';
+            position: absolute;
+            inset: -15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: calc(var(--card-radius) + 10px);
+            z-index: -1;
+            opacity: 0;
+            animation: cardPulse 2s ease-in-out infinite 2.2s;
+            filter: blur(15px);
+        }
+
+        @keyframes cardPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
         }
 
         /* Ground shadow under the card */
@@ -2087,7 +2114,7 @@
 
     <!-- Splash Screen -->
     <div id="splashScreen">
-        <div class="splash-card-container">
+        <div class="splash-card-container" id="splashCardContainer">
             <div class="pc-card-wrapper" id="splashCardWrapper">
                 <div class="pc-behind"></div>
                 <div class="pc-card-shell" id="splashCardShell">
@@ -2121,7 +2148,7 @@
                 </div>
             </div>
         </div>
-        <div class="splash-hint">Click anywhere to enter</div>
+        <div class="splash-hint">Click to enter</div>
     </div>
 
     <div class="site-content" id="siteContent">
@@ -3277,21 +3304,25 @@
             }
 
             // Dismiss splash on click — unfold downward from top hinge
-            splash.addEventListener('click', function () {
-                if (splash.classList.contains('unfold')) return;
-                splash.classList.add('unfold');
+            var cardContainer = document.getElementById('splashCardContainer');
+            if (cardContainer) {
+                cardContainer.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (splash.classList.contains('unfold')) return;
+                    splash.classList.add('unfold');
 
-                // Fade in site content as card unfolds away
-                setTimeout(function () {
-                    siteContent.classList.add('visible');
-                }, 700);
+                    // Fade in site content as card unfolds away
+                    setTimeout(function () {
+                        siteContent.classList.add('visible');
+                    }, 700);
 
-                // Remove splash after all animations complete
-                setTimeout(function () {
-                    splash.style.display = 'none';
-                    if (sRafId) cancelAnimationFrame(sRafId);
-                }, 1500);
-            });
+                    // Remove splash after all animations complete
+                    setTimeout(function () {
+                        splash.style.display = 'none';
+                        if (sRafId) cancelAnimationFrame(sRafId);
+                    }, 1500);
+                });
+            }
         })();
     </script>
 </body>
